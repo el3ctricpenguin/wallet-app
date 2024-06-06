@@ -1,6 +1,44 @@
 import Head from "next/head";
+import { useAccount, useBalance, useConnect, useDisconnect, useReadContract } from "wagmi";
+import { Decimal } from "decimal.js";
+import { erc20Abi, formatUnits } from "viem";
+import { SEPOLIA_USDT } from "@/constants";
 
-export default function CatPage() {
+function Balance({ address, tokenAddress = undefined }: { address: `0x${string}` | undefined; tokenAddress: `0x${string}` | undefined }) {
+    if (tokenAddress) {
+        const { data, isError, isLoading } = useBalance({ address: address, token: tokenAddress });
+
+        const name = useReadContract({
+            address: tokenAddress,
+            abi: erc20Abi,
+            functionName: "name",
+        });
+        const tokenName = name.data;
+        const tokenSymbol = data?.symbol;
+        const tokenBalance = data ? formatUnits(data.value, data.decimals) : "-";
+        return (
+            <div>
+                {tokenName}: {tokenBalance} {tokenSymbol}
+            </div>
+        );
+    } else {
+        const { data, isError, isLoading } = useBalance({ address: address });
+        const tokenName = "Ethereum";
+        const tokenSymbol = data?.symbol;
+        const tokenBalance = data ? formatUnits(data.value, data.decimals) : "-";
+        console.log(data);
+        return (
+            <div>
+                {tokenName}: {tokenBalance.toString()} {tokenSymbol}
+            </div>
+        );
+    }
+}
+
+export default function WalletApp() {
+    const { isConnected, address } = useAccount();
+    const { connectors, connect } = useConnect();
+    const { disconnect } = useDisconnect();
     return (
         <>
             <Head>
@@ -8,6 +46,8 @@ export default function CatPage() {
             </Head>
             <main>
                 <h1>wallet-app</h1>
+                <Balance address={address} tokenAddress={undefined} />
+                <Balance address={address} tokenAddress={SEPOLIA_USDT} />
             </main>
         </>
     );
