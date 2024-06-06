@@ -13,6 +13,7 @@ function Balance({ address, tokenAddress = undefined }: { address: `0x${string}`
             abi: erc20Abi,
             functionName: "name",
         });
+        console.log(data);
         const tokenName = name.data;
         const tokenSymbol = data?.symbol;
         const tokenBalance = data ? formatUnits(data.value, data.decimals) : "-";
@@ -23,8 +24,8 @@ function Balance({ address, tokenAddress = undefined }: { address: `0x${string}`
         );
     } else {
         const { data, isError, isLoading } = useBalance({ address: address });
-        const tokenName = "Ethereum";
         const tokenSymbol = data?.symbol;
+        const tokenName = tokenSymbol == "ETH" ? "Ethereum" : "Mantle";
         const tokenBalance = data ? formatUnits(data.value, data.decimals) : "-";
         console.log(data);
         return (
