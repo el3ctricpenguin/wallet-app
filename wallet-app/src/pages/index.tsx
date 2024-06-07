@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Config, Connector, useAccount, useBalance, useConnect, useDisconnect, useReadContract } from "wagmi";
+import { Config, Connector, useAccount, useBalance, useConnect, useDisconnect, useReadContract, useSwitchChain } from "wagmi";
 import { Decimal } from "decimal.js";
 import { erc20Abi, formatUnits } from "viem";
 import { SEPOLIA_USDT } from "@/constants";
@@ -38,6 +38,47 @@ function Account({
     }
 }
 
+function ChainSwitcher({ initialChain }: { initialChain: any }) {
+    const { chains, data, status, switchChain } = useSwitchChain();
+    console.log("data:");
+    console.log(data);
+    console.log("initialChain:");
+    console.log(initialChain);
+    const currentChain = data ? data : initialChain ? initialChain : chains[0];
+    console.log("currentChain:");
+    console.log(currentChain);
+
+    // in case currentChain isn't included in supported chains
+
+    if (status == "pending") {
+        return (
+            <select>
+                <option>pending</option>
+            </select>
+        );
+    } else {
+        return (
+            <select name="" id="" value={currentChain.id} onChange={(e) => switchChain({ chainId: Number(e.target.value) })}>
+                {chains.map((chain) => (
+                    <option value={chain.id}>{chain.name}</option>
+                ))}
+            </select>
+        );
+    }
+}
+
+function Chain({ chain }: { chain: any }) {
+    return (
+        <>
+            Chain Name: {chain?.name}
+            <br />
+            Chain Id: {chain?.id}
+            <br />
+            <ChainSwitcher initialChain={chain} />
+        </>
+    );
+}
+
 function Balance({ address, tokenAddress = undefined }: { address: `0x${string}` | undefined; tokenAddress: `0x${string}` | undefined }) {
     if (tokenAddress) {
         const { data, isError, isLoading } = useBalance({ address: address, token: tokenAddress });
@@ -47,7 +88,6 @@ function Balance({ address, tokenAddress = undefined }: { address: `0x${string}`
             abi: erc20Abi,
             functionName: "name",
         });
-        console.log(data);
         const tokenName = name.data;
         const tokenSymbol = data?.symbol;
         const tokenBalance = data ? formatUnits(data.value, data.decimals) : "-";
@@ -61,7 +101,6 @@ function Balance({ address, tokenAddress = undefined }: { address: `0x${string}`
         const tokenSymbol = data?.symbol;
         const tokenName = tokenSymbol == "MNT" ? "Mantle" : "Ethereum";
         const tokenBalance = data ? formatUnits(data.value, data.decimals) : "-";
-        console.log(data);
         return (
             <div>
                 {tokenName}: {tokenBalance.toString()} {tokenSymbol}
@@ -71,7 +110,7 @@ function Balance({ address, tokenAddress = undefined }: { address: `0x${string}`
 }
 
 export default function WalletApp() {
-    const { isConnected, address } = useAccount();
+    const { isConnected, address, chain } = useAccount();
     const { connectors, connect } = useConnect();
     const { disconnect } = useDisconnect();
     return (
@@ -83,6 +122,8 @@ export default function WalletApp() {
                 <h1>wallet-app</h1>
                 <h3>Account:</h3>
                 <Account isConnected={isConnected} connectors={connectors} address={address} connect={connect} disconnect={disconnect} />
+                <h3>Chain:</h3>
+                <Chain chain={chain} />
                 <h3>Balances:</h3>
                 <Balance address={address} tokenAddress={undefined} />
                 <Balance address={address} tokenAddress={SEPOLIA_USDT} />
