@@ -3,6 +3,7 @@ import { Config, Connector, useAccount, useBalance, useConnect, useDisconnect, u
 import { Decimal } from "decimal.js";
 import { erc20Abi, formatUnits } from "viem";
 import { SEPOLIA_USDT } from "@/constants";
+import { useMemo } from "react";
 
 function Account({
     isConnected,
@@ -38,17 +39,8 @@ function Account({
     }
 }
 
-function ChainSwitcher({ initialChain }: { initialChain: any }) {
+function ChainSwitcher({ chain }: { chain: any }) {
     const { chains, data, status, switchChain } = useSwitchChain();
-    console.log("data:");
-    console.log(data);
-    console.log("initialChain:");
-    console.log(initialChain);
-    const currentChain = data ? data : initialChain ? initialChain : chains[0];
-    console.log("currentChain:");
-    console.log(currentChain);
-
-    // in case currentChain isn't included in supported chains
 
     if (status == "pending") {
         return (
@@ -58,7 +50,12 @@ function ChainSwitcher({ initialChain }: { initialChain: any }) {
         );
     } else {
         return (
-            <select name="" id="" value={currentChain.id} onChange={(e) => switchChain({ chainId: Number(e.target.value) })}>
+            <select name="" id="" value={chain ? chain.id : ""} onChange={(e) => switchChain({ chainId: Number(e.target.value) })}>
+                {chain ? null : (
+                    <option disabled value="">
+                        Unsupported Network
+                    </option>
+                )}
                 {chains.map((chain) => (
                     <option value={chain.id}>{chain.name}</option>
                 ))}
@@ -70,11 +67,11 @@ function ChainSwitcher({ initialChain }: { initialChain: any }) {
 function Chain({ chain }: { chain: any }) {
     return (
         <>
-            Chain Name: {chain?.name}
+            Chain Name: {chain ? chain.name : "-"}
             <br />
-            Chain Id: {chain?.id}
+            Chain Id: {chain ? chain.id : "-"}
             <br />
-            <ChainSwitcher initialChain={chain} />
+            <ChainSwitcher chain={chain} />
         </>
     );
 }
