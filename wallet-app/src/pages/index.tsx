@@ -16,13 +16,13 @@ export default function WalletApp() {
     const { disconnect } = useDisconnect();
 
     const [bgColor, setBgColor] = useState("gray.400");
-    if (isConnected) {
-        return (
-            <>
-                <Head>
-                    <title>wallet-app</title>
-                </Head>
-                <Center w="100%" h="100%" bgColor={bgColor} position="fixed" top={0} left={0}>
+    return (
+        <>
+            <Head>
+                <title>wallet-app</title>
+            </Head>
+            <Center w="100%" h="100%" bgColor={bgColor} position="fixed" top={0} left={0}>
+                {isConnected ? (
                     <Box as="main" w={1000}>
                         <Heading as="h2" size="2xl">
                             wallet-app
@@ -47,16 +47,7 @@ export default function WalletApp() {
                         <Balance address={address} tokenAddress={undefined} />
                         <Balance address={address} tokenAddress={SEPOLIA_USDT} />
                     </Box>
-                </Center>
-            </>
-        );
-    } else {
-        return (
-            <>
-                <Head>
-                    <title>wallet-app</title>
-                </Head>
-                <Center w="100%" h="100%" bgColor={bgColor} position="fixed" top={0} left={0}>
+                ) : (
                     <Box as="main" w={1000}>
                         <Heading as="h2" size="2xl" fontFamily={"monospace"}>
                             wallet-app v1.0
@@ -69,8 +60,8 @@ export default function WalletApp() {
                             disconnect={disconnect}
                         />
                     </Box>
-                </Center>
-            </>
-        );
-    }
+                )}
+            </Center>
+        </>
+    );
 }
