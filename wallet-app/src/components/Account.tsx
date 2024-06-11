@@ -1,3 +1,4 @@
+import { background, Center, Link } from "@chakra-ui/react";
 import { Connector } from "wagmi";
 export default function Account({
     isConnected,
@@ -16,18 +17,26 @@ export default function Account({
         return (
             <>
                 {address} (
-                <a href="#" onClick={disconnect}>
+                <Link href="#" onClick={disconnect} _hover={{ fontStyle: "italic", textDecoration: "underline" }}>
                     Disconnect
-                </a>
+                </Link>
                 )
             </>
         );
     } else {
         return (
             <>
-                <a href="#" onClick={() => connect({ connector: connectors[0] })}>
+                <Center
+                    as="a"
+                    href="#"
+                    onClick={() => connect({ connector: connectors[0] })}
+                    py={25}
+                    my={5}
+                    border={"1px solid white"}
+                    _hover={{ bg: "whiteAlpha.400" }}
+                >
                     Connect wallet
-                </a>
+                </Center>
             </>
         );
     }
