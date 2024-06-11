@@ -13,5 +13,9 @@ export const theme = extendTheme({
         components: {
             Heading: heading,
         },
+        config: {
+            initialColorMode: "dark",
+            useSystemColorMode: false,
+        },
     },
 });

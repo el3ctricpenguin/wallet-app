@@ -1,14 +1,15 @@
 import Head from "next/head";
 import NextLink from "next/link";
-import { Config, useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { Decimal } from "decimal.js";
 import { SEPOLIA_USDT } from "@/constants";
-import { Box, Center, Heading, Link } from "@chakra-ui/react";
+import { Box, Center, Heading, Text } from "@chakra-ui/react";
 
 import Account from "../components/Account";
 import Balance from "../components/Balance";
 import Chain from "../components/Chain";
 import { useState } from "react";
+import WalletWrapper from "@/components/WalletWrapper";
 
 export default function WalletApp() {
     const { isConnected, address, chain } = useAccount();
@@ -18,18 +19,19 @@ export default function WalletApp() {
     const [bgColor, setBgColor] = useState("gray.400");
     return (
         <>
-            <Head>
-                <title>wallet-app</title>
-            </Head>
-            <Center w="100%" h="100%" bgColor={bgColor} position="fixed" top={0} left={0}>
+            <WalletWrapper bgColor={bgColor}>
                 {isConnected ? (
                     <Box as="main" w={1000}>
                         <Heading as="h2" size="2xl">
                             wallet-app
                         </Heading>
-                        <Heading as="h3" size="lg">
+                        <Text size="xl" mt={2}>
+                            Network:
+                        </Text>
+                        <Chain chain={chain} />
+                        <Text size="xl" mt={2}>
                             Account:
-                        </Heading>
+                        </Text>
                         <Account
                             isConnected={isConnected}
                             connectors={connectors}
@@ -37,15 +39,15 @@ export default function WalletApp() {
                             connect={connect}
                             disconnect={disconnect}
                         />
-                        <Heading as="h3" size="lg">
-                            Chain:
-                        </Heading>
-                        <Chain chain={chain} />
-                        <Heading as="h3" size="lg">
+                        <Text size="xl" mt={2}>
                             Balances:
-                        </Heading>
-                        <Balance address={address} tokenAddress={undefined} />
-                        <Balance address={address} tokenAddress={SEPOLIA_USDT} />
+                        </Text>
+                        <NextLink href="/send">
+                            <Balance address={address} tokenAddress={undefined} />
+                        </NextLink>
+                        <NextLink href={"/send/" + SEPOLIA_USDT}>
+                            <Balance address={address} tokenAddress={SEPOLIA_USDT} />
+                        </NextLink>
                     </Box>
                 ) : (
                     <Box as="main" w={1000}>
@@ -61,7 +63,7 @@ export default function WalletApp() {
                         />
                     </Box>
                 )}
-            </Center>
+            </WalletWrapper>
         </>
     );
 }

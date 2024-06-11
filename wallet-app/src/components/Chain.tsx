@@ -12,7 +12,14 @@ export default function ChainSwitcher({ chain }: { chain: any }) {
         );
     } else {
         return (
-            <Select w={250} name="" id="" value={chain ? chain.id : ""} onChange={(e) => switchChain({ chainId: Number(e.target.value) })}>
+            <Select
+                w={280}
+                name=""
+                id=""
+                value={chain ? chain.id : ""}
+                onChange={(e) => switchChain({ chainId: Number(e.target.value) })}
+                borderRadius={0}
+            >
                 {chain ? null : (
                     <option disabled value="">
                         Unsupported Network

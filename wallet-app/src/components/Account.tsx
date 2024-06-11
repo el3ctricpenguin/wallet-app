@@ -17,7 +17,7 @@ export default function Account({
         return (
             <>
                 {address} (
-                <Link href="#" onClick={disconnect} _hover={{ fontStyle: "italic", textDecoration: "underline" }}>
+                <Link href="#" onClick={disconnect} textDecoration="underline" _hover={{ fontStyle: "italic" }}>
                     Disconnect
                 </Link>
                 )
