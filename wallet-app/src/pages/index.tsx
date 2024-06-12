@@ -1,22 +1,21 @@
-import Head from "next/head";
 import NextLink from "next/link";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { Decimal } from "decimal.js";
+
 import { SEPOLIA_USDT, getNativeTokenName } from "@/constants";
-import { Box, Center, Heading, Text } from "@chakra-ui/react";
+import { Heading, Text } from "@chakra-ui/react";
 
 import Account from "@/components/Account";
 import Balance from "@/components/Balance";
 import Chain from "../components/Chain";
-import { useState } from "react";
+import { type ReactElement, useState } from "react";
 import WalletWrapper from "@/components/WalletWrapper";
 
-export default function WalletApp() {
+export default function WalletApp(): ReactElement {
     const { isConnected, address, chain } = useAccount();
     const { connectors, connect } = useConnect();
     const { disconnect } = useDisconnect();
 
-    const [bgColor, setBgColor] = useState("gray.400");
+    const [bgColor] = useState("gray.400");
     const nativeToken = getNativeTokenName(chain?.name);
     return (
         <>

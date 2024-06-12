@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { useState } from "react";
+import { type ReactElement, useState } from "react";
 import { useAccount, useBalance, useConnect, useDisconnect, useReadContract } from "wagmi";
-import { Alert, AlertIcon, border, Box, Button, Center, Heading, Input, InputGroup, InputRightAddon, Link, Text } from "@chakra-ui/react";
+import { Alert, AlertIcon, Button, Input, InputGroup, InputRightAddon, Link, Text } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 
 import { erc20Abi, formatUnits, getAddress, isAddress } from "viem";
@@ -13,7 +13,7 @@ import Chain from "../../components/Chain";
 import { getNativeTokenName } from "@/constants";
 import WalletWrapper from "@/components/WalletWrapper";
 
-function BackToTopLink() {
+function BackToTopLink(): ReactElement {
     return (
         <Link as={NextLink} href="/" textDecoration="underline" _hover={{ fontStyle: "italic" }}>
             Back to balances
@@ -22,7 +22,7 @@ function BackToTopLink() {
     );
 }
 
-function ErrorCard({ children }: { children: React.ReactNode }) {
+function ErrorCard({ children }: { children: React.ReactNode }): ReactElement {
     return (
         <Alert status="error" variant="solid" my={4} boxShadow="0px 0px 10px #00000077">
             <AlertIcon />
@@ -31,7 +31,7 @@ function ErrorCard({ children }: { children: React.ReactNode }) {
     );
 }
 
-export default function Send() {
+export default function Send(): ReactElement {
     const { isConnected, address, chain } = useAccount();
     const { connectors, connect } = useConnect();
     const { disconnect } = useDisconnect();
@@ -47,12 +47,13 @@ export default function Send() {
     let tokenAddress: `0x${string}` | null;
 
     if (isETH) {
+        return <></>;
     } else {
         let errorContent: string;
-        if (typeof routerQuery == "string") {
+        if (typeof routerQuery === "string") {
             if (isAddress(routerQuery)) {
                 tokenAddress = getAddress(routerQuery);
-                const { data: balance, isError, isLoading } = useBalance({ address: address, token: tokenAddress });
+                const { data: balance } = useBalance({ address, token: tokenAddress });
                 const nameResult = useReadContract({
                     address: tokenAddress,
                     abi: erc20Abi,
@@ -125,8 +126,6 @@ export default function Send() {
                                     </Button>
                                 </InputRightAddon>
                             </InputGroup>
-
-                            <Balance address={address} tokenAddress={tokenAddress}></Balance>
                             <BackToTopLink />
                         </WalletWrapper>
                     </>

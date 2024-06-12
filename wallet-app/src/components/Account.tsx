@@ -1,4 +1,4 @@
-import { background, Center, Link } from "@chakra-ui/react";
+import { Center, Link } from "@chakra-ui/react";
 import { Connector } from "wagmi";
 export default function Account({
     isConnected,

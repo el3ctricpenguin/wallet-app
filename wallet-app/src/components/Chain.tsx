@@ -25,7 +25,9 @@ export default function ChainSwitcher({ chain }: { chain: any }) {
                 name=""
                 id=""
                 value={chain ? chain.id : ""}
-                onChange={(e) => switchChain({ chainId: Number(e.target.value) })}
+                onChange={(e) => {
+                    switchChain({ chainId: Number(e.target.value) });
+                }}
                 borderRadius={0}
                 borderWidth={3}
                 borderColor="white"
@@ -46,7 +48,7 @@ export default function ChainSwitcher({ chain }: { chain: any }) {
     }
 }
 
-function Chain({ chain }: { chain: any }) {
+export function Chain({ chain }: { chain: any }) {
     return (
         <>
             Chain Name: {chain ? chain.name : "-"}

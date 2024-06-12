@@ -10,7 +10,7 @@ export default function WalletWrapper({ bgColor, children }: { bgColor: string; 
             <Center w="100%" h="100%" bgColor={bgColor} position="fixed" top={0} left={0}>
                 <Box as="main" w={1000}>
                     <Heading as="h2" size="2xl" fontFamily={"monospace"}>
-                        wallet-app v1.0
+                        wallet-app
                     </Heading>
                     {children}
                 </Box>
