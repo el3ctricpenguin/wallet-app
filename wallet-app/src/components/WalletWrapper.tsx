@@ -1,7 +1,7 @@
 import { Box, Center, Heading } from "@chakra-ui/react";
 import Head from "next/head";
 
-export default function WalletWrapper({ bgColor, children }: { bgColor: string; children: React.ReactNode }) {
+export default function WalletWrapper({ bgColor, children }: { bgColor: string; children: React.ReactNode }): JSX.Element {
     return (
         <>
             <Head>
