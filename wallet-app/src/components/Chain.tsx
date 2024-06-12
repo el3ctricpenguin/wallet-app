@@ -7,7 +7,7 @@ export default function ChainSwitcher({ chain }: { chain: any }) {
     if (status == "pending") {
         return (
             <Select
-                w={250}
+                w={280}
                 borderRadius={0}
                 borderWidth={3}
                 borderColor="white"
