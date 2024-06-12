@@ -9,6 +9,7 @@ import {
     useReadContract,
     useSendTransaction,
     useWaitForTransactionReceipt,
+    useWriteContract,
 } from "wagmi";
 import { Alert, AlertIcon, Button, Flex, Heading, Input, InputGroup, InputRightAddon, Link, Spinner, Text } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
@@ -117,6 +118,16 @@ function TxResult({
 }): ReactElement {
     return (
         <>
+            {hash && (
+                <>
+                    <Heading size="lg" mt={2} mb={1}>
+                        Tx Hash:
+                    </Heading>{" "}
+                    <Link href={explorerUrl + "/tx/" + hash} target="_blank" textDecoration="underline" _hover={{ fontStyle: "italic" }}>
+                        {hash}
+                    </Link>
+                </>
+            )}
             {isPending && (
                 <Text>
                     [<Spinner size="sm" mx={2} />
@@ -130,16 +141,6 @@ function TxResult({
                 </Text>
             )}
             {isConfirmed && <Text>[Transaction Confirmed!]</Text>}
-            {hash && (
-                <>
-                    <Heading size="lg" mt={2} mb={1}>
-                        Tx Hash:
-                    </Heading>{" "}
-                    <Link href={explorerUrl + "/tx/" + hash} target="_blank" textDecoration="underline" _hover={{ fontStyle: "italic" }}>
-                        {hash}
-                    </Link>
-                </>
-            )}
             {isConfirmed && <RedirectTimer timer={10} />}
         </>
     );
@@ -171,13 +172,24 @@ function RedirectTimer({ timer }: { timer: number }): ReactElement {
     );
 }
 
+type TokenInfo = {
+    address: `0x${string}`;
+    decimals: number;
+};
+
 export default function Send(): ReactElement {
     const { isConnected, address, chain } = useAccount();
     const { connectors, connect } = useConnect();
     const { disconnect } = useDisconnect();
-    const { data: hash, isPending, sendTransaction } = useSendTransaction();
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-        hash,
+
+    const { data: ethHash, isPending: isEthPending, sendTransaction } = useSendTransaction();
+    const { isLoading: isEthConfirming, isSuccess: isEthConfirmed } = useWaitForTransactionReceipt({
+        hash: ethHash,
+    });
+
+    const { data: tokenHash, isPending: isTokenPending, writeContract } = useWriteContract();
+    const { isLoading: isTokenConfirming, isSuccess: isTokenConfirmed } = useWaitForTransactionReceipt({
+        hash: tokenHash,
     });
 
     // const [bgColor, setBgColor] = useState("gray.400");
@@ -190,14 +202,22 @@ export default function Send(): ReactElement {
     const isETH = routerQuery == nativeToken;
     let tokenAddress: `0x${string}` | null;
 
-    function sendTx(e: React.FormEvent<HTMLFormElement>) {
+    function sendTx(e: React.FormEvent<HTMLFormElement>, tokenInfo: TokenInfo | undefined = undefined) {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
         const to = formData.get("address") as `0x${string}`;
         const value = formData.get("amount") as string;
-        if (isETH) {
-            sendTransaction({ to, value: parseEther(value) });
+        if (tokenInfo) {
+            if (typeof routerQuery == "string") {
+                writeContract({
+                    address: tokenInfo.address,
+                    abi: erc20Abi,
+                    functionName: "transfer",
+                    args: [to, BigInt(value) * BigInt(10 ** tokenInfo.decimals)],
+                });
+            }
         } else {
+            sendTransaction({ to, value: parseEther(value) });
         }
     }
 
@@ -225,10 +245,10 @@ export default function Send(): ReactElement {
                     <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
                     <SendForm sendTx={sendTx} tokenName={nativeToken} bgColor={bgColor} />
                     <TxResult
-                        isPending={isPending}
-                        isConfirming={isConfirming}
-                        isConfirmed={isConfirmed}
-                        hash={hash}
+                        isPending={isEthPending}
+                        isConfirming={isEthConfirming}
+                        isConfirmed={isEthConfirmed}
+                        hash={ethHash}
                         explorerUrl={chain?.blockExplorers.default.url}
                     />
                     <BackToTopLink />
@@ -241,14 +261,19 @@ export default function Send(): ReactElement {
             if (isAddress(routerQuery)) {
                 tokenAddress = getAddress(routerQuery);
                 const { data: balance } = useBalance({ address, token: tokenAddress });
-                const nameResult = useReadContract({
-                    address: tokenAddress,
-                    abi: erc20Abi,
-                    functionName: "name",
-                });
-                const tokenName = nameResult.data;
                 const tokenSymbol = balance?.symbol;
                 const tokenBalance = balance ? formatUnits(balance.value, balance.decimals) : "-";
+                const decimals = Number(
+                    useReadContract({
+                        address: tokenAddress,
+                        abi: erc20Abi,
+                        functionName: "decimals",
+                    }).data
+                );
+                const tokenInfo: TokenInfo = {
+                    address: tokenAddress,
+                    decimals: decimals,
+                };
                 return (
                     <>
                         <WalletWrapper bgColor={bgColor}>
@@ -270,12 +295,12 @@ export default function Send(): ReactElement {
                                 Send {tokenSymbol}:
                             </Heading>
                             <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
-                            <SendForm sendTx={sendTx} tokenName={tokenSymbol} bgColor={bgColor} />
+                            <SendForm sendTx={(e) => sendTx(e, tokenInfo)} tokenName={tokenSymbol} bgColor={bgColor} />
                             <TxResult
-                                isPending={isPending}
-                                isConfirming={isConfirming}
-                                isConfirmed={isConfirmed}
-                                hash={hash}
+                                isPending={isTokenPending}
+                                isConfirming={isTokenConfirming}
+                                isConfirmed={isTokenConfirmed}
+                                hash={tokenHash}
                                 explorerUrl={chain?.blockExplorers.default.url}
                             />
                             <BackToTopLink />
