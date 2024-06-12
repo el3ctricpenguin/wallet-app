@@ -64,11 +64,11 @@ export default function Send(): ReactElement {
                         connect={connect}
                         disconnect={disconnect}
                     />
-                    <Heading size="lg" mt={2}>
+                    <Heading size="lg" mt={2} mb={1}>
                         Send {nativeToken}:
                     </Heading>
-                    <Balance address={address} tokenAddress={undefined} />
-                    <InputGroup>
+                    <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
+                    <InputGroup mt={3}>
                         <Input
                             width={300}
                             height={16}
@@ -146,11 +146,11 @@ export default function Send(): ReactElement {
                                 connect={connect}
                                 disconnect={disconnect}
                             />
-                            <Heading size="lg" mt={2}>
+                            <Heading size="lg" mt={2} mb={1}>
                                 Send {tokenSymbol}:
                             </Heading>
-                            <Balance address={address} tokenAddress={tokenAddress} />
-                            <InputGroup>
+                            <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
+                            <InputGroup mt={3}>
                                 <Input
                                     width={300}
                                     height={16}

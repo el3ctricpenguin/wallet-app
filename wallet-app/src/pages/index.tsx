@@ -2,7 +2,7 @@ import NextLink from "next/link";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 
 import { SEPOLIA_USDT, getNativeTokenName } from "@/constants";
-import { Heading, Text } from "@chakra-ui/react";
+import { Divider, Heading, Text } from "@chakra-ui/react";
 
 import Account from "@/components/Account";
 import Balance from "@/components/Balance";
@@ -40,10 +40,11 @@ export default function WalletApp(): ReactElement {
                             Balances:
                         </Heading>
                         <NextLink href={"/send/" + nativeToken}>
-                            <Balance address={address} tokenAddress={undefined} />
+                            <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={true} />
                         </NextLink>
+                        <Divider borderColor={bgColor} borderWidth={2} />
                         <NextLink href={"/send/" + SEPOLIA_USDT}>
-                            <Balance address={address} tokenAddress={SEPOLIA_USDT} />
+                            <Balance address={address} tokenAddress={SEPOLIA_USDT} isHoverEffectEnabled={true} />
                         </NextLink>
                     </>
                 ) : (
