@@ -1,8 +1,16 @@
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { type ReactElement, useState } from "react";
-import { useAccount, useBalance, useConnect, useDisconnect, useReadContract, useSendTransaction } from "wagmi";
-import { Alert, AlertIcon, Button, Heading, Input, InputGroup, InputRightAddon, Link, Text } from "@chakra-ui/react";
+import { FormEventHandler, type ReactElement, useEffect, useState } from "react";
+import {
+    useAccount,
+    useBalance,
+    useConnect,
+    useDisconnect,
+    useReadContract,
+    useSendTransaction,
+    useWaitForTransactionReceipt,
+} from "wagmi";
+import { Alert, AlertIcon, Button, Flex, Heading, Input, InputGroup, InputRightAddon, Link, Spinner, Text } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 
 import { erc20Abi, formatUnits, getAddress, isAddress, parseEther } from "viem";
@@ -31,11 +39,146 @@ function ErrorCard({ children }: { children: React.ReactNode }): ReactElement {
     );
 }
 
+function SendForm({
+    sendTx,
+    tokenName,
+    bgColor,
+}: {
+    sendTx: FormEventHandler<HTMLFormElement>;
+    tokenName: string | undefined;
+    bgColor: string;
+}): ReactElement {
+    return (
+        <form onSubmit={sendTx}>
+            <InputGroup mt={3}>
+                <Input
+                    width={300}
+                    height={16}
+                    fontSize={36}
+                    placeholder="0.0"
+                    borderColor="white"
+                    borderRadius={0}
+                    borderWidth={4}
+                    _placeholder={{ color: "whiteAlpha.500" }}
+                    _hover={{ borderColor: "white" }}
+                    _active={{ borderColor: "white", boxShadow: "none" }}
+                    _focusVisible={{ borderColor: "white", boxShadow: "none" }}
+                    name="amount"
+                    required={true}
+                />
+                <InputRightAddon bgColor="transparent" border="none" h="auto">
+                    <Text fontSize={40}>{tokenName}</Text>
+                </InputRightAddon>
+            </InputGroup>
+            <InputGroup size="md" my={3}>
+                <Input
+                    placeholder="0x..."
+                    borderColor="white"
+                    borderWidth={4}
+                    borderRadius={0}
+                    _placeholder={{ color: "whiteAlpha.500" }}
+                    _hover={{ borderColor: "white" }}
+                    _active={{ borderColor: "white", boxShadow: "none" }}
+                    _focusVisible={{ borderColor: "white", boxShadow: "none" }}
+                    name="address"
+                    required
+                />
+                <InputRightAddon borderRadius={0} p={0}>
+                    <Button
+                        color="white"
+                        bgColor={bgColor}
+                        borderWidth={4}
+                        borderLeftWidth={0}
+                        borderRadius={0}
+                        borderColor="white"
+                        _hover={{ color: bgColor, bgColor: "white", borderColor: "white" }}
+                        type="submit"
+                    >
+                        Send
+                    </Button>
+                </InputRightAddon>
+            </InputGroup>
+        </form>
+    );
+}
+
+function TxResult({
+    isPending,
+    isConfirming,
+    isConfirmed,
+    hash,
+    explorerUrl,
+}: {
+    isPending: boolean;
+    isConfirming: boolean;
+    isConfirmed: boolean;
+    hash: string | undefined;
+    explorerUrl: string | undefined;
+}): ReactElement {
+    return (
+        <>
+            {isPending && (
+                <Text>
+                    [<Spinner size="sm" mx={2} />
+                    Pending...]
+                </Text>
+            )}
+            {isConfirming && (
+                <Text>
+                    [<Spinner size="sm" mx={2} />
+                    Confirming...]
+                </Text>
+            )}
+            {isConfirmed && <Text>[Transaction Confirmed!]</Text>}
+            {hash && (
+                <>
+                    <Heading size="lg" mt={2} mb={1}>
+                        Tx Hash:
+                    </Heading>{" "}
+                    <Link href={explorerUrl + "/tx/" + hash} target="_blank" textDecoration="underline" _hover={{ fontStyle: "italic" }}>
+                        {hash}
+                    </Link>
+                </>
+            )}
+            {isConfirmed && <RedirectTimer timer={10} />}
+        </>
+    );
+}
+
+function RedirectTimer({ timer }: { timer: number }): ReactElement {
+    const [countdown, setCountdown] = useState(timer);
+    const router = useRouter();
+
+    useEffect(() => {
+        const countdownTimer = setInterval(() => {
+            setCountdown((count) => count - 1);
+        }, 1000);
+        const redirectTimer = setTimeout(() => {
+            router.push("/");
+        }, timer * 1000);
+
+        return () => {
+            clearInterval(countdownTimer);
+            clearTimeout(redirectTimer);
+        };
+    }, [router]);
+
+    return (
+        <Flex>
+            <Spinner size="md" mr={4} />
+            <Text verticalAlign="center">Redirect in {countdown} seconds...</Text>
+        </Flex>
+    );
+}
+
 export default function Send(): ReactElement {
     const { isConnected, address, chain } = useAccount();
     const { connectors, connect } = useConnect();
     const { disconnect } = useDisconnect();
-    const { data: hash, sendTransaction } = useSendTransaction();
+    const { data: hash, isPending, sendTransaction } = useSendTransaction();
+    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+        hash,
+    });
 
     // const [bgColor, setBgColor] = useState("gray.400");
     const [bgColor, setBgColor] = useState("red.400");
@@ -80,69 +223,14 @@ export default function Send(): ReactElement {
                         Send {nativeToken}:
                     </Heading>
                     <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
-                    <form onSubmit={sendTx}>
-                        <InputGroup mt={3}>
-                            <Input
-                                width={300}
-                                height={16}
-                                fontSize={36}
-                                placeholder="0.0"
-                                borderColor="white"
-                                borderRadius={0}
-                                borderWidth={4}
-                                _placeholder={{ color: "whiteAlpha.500" }}
-                                _hover={{ borderColor: "white" }}
-                                _active={{ borderColor: "white", boxShadow: "none" }}
-                                _focusVisible={{ borderColor: "white", boxShadow: "none" }}
-                                name="amount"
-                                required={true}
-                            />
-                            <InputRightAddon bgColor="transparent" border="none" h="auto">
-                                <Text fontSize={40}>{nativeToken}</Text>
-                            </InputRightAddon>
-                        </InputGroup>
-                        <InputGroup size="md" my={3}>
-                            <Input
-                                placeholder="0x..."
-                                borderColor="white"
-                                borderWidth={4}
-                                borderRadius={0}
-                                _placeholder={{ color: "whiteAlpha.500" }}
-                                _hover={{ borderColor: "white" }}
-                                _active={{ borderColor: "white", boxShadow: "none" }}
-                                _focusVisible={{ borderColor: "white", boxShadow: "none" }}
-                                name="address"
-                                required
-                            />
-                            <InputRightAddon borderRadius={0} p={0}>
-                                <Button
-                                    color="white"
-                                    bgColor={bgColor}
-                                    borderWidth={4}
-                                    borderLeftWidth={0}
-                                    borderRadius={0}
-                                    borderColor="white"
-                                    _hover={{ color: bgColor, bgColor: "white", borderColor: "white" }}
-                                    type="submit"
-                                >
-                                    Send
-                                </Button>
-                            </InputRightAddon>
-                        </InputGroup>
-                    </form>
-                    {hash && (
-                        <Text>
-                            Tx Hash:{" "}
-                            <Link
-                                href={chain?.blockExplorers.default.url + "/tx/" + hash}
-                                target="_blank"
-                                textDecoration="underline"
-                                _hover={{ fontStyle: "italic" }}
-                            >
-                                {hash}
-                            </Link>
-                        </Text>
-                    )}
+                    <SendForm sendTx={sendTx} tokenName={nativeToken} bgColor={bgColor} />
+                    <TxResult
+                        isPending={isPending}
+                        isConfirming={isConfirming}
+                        isConfirmed={isConfirmed}
+                        hash={hash}
+                        explorerUrl={chain?.blockExplorers.default.url}
+                    />
                     <BackToTopLink />
                 </WalletWrapper>
             </>
@@ -182,49 +270,14 @@ export default function Send(): ReactElement {
                                 Send {tokenSymbol}:
                             </Heading>
                             <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
-                            <InputGroup mt={3}>
-                                <Input
-                                    width={300}
-                                    height={16}
-                                    fontSize={36}
-                                    placeholder="0.0"
-                                    borderColor="white"
-                                    borderRadius={0}
-                                    borderWidth={4}
-                                    _placeholder={{ color: "whiteAlpha.500" }}
-                                    _hover={{ borderColor: "white" }}
-                                    _active={{ borderColor: "white", boxShadow: "none" }}
-                                    _focusVisible={{ borderColor: "white", boxShadow: "none" }}
-                                />
-                                <InputRightAddon bgColor="transparent" border="none" h="auto">
-                                    <Text fontSize={40}>{tokenSymbol}</Text>
-                                </InputRightAddon>
-                            </InputGroup>
-                            <InputGroup size="md" my={3}>
-                                <Input
-                                    placeholder="0x..."
-                                    borderColor="white"
-                                    borderWidth={4}
-                                    borderRadius={0}
-                                    _placeholder={{ color: "whiteAlpha.500" }}
-                                    _hover={{ borderColor: "white" }}
-                                    _active={{ borderColor: "white", boxShadow: "none" }}
-                                    _focusVisible={{ borderColor: "white", boxShadow: "none" }}
-                                />
-                                <InputRightAddon borderRadius={0} p={0}>
-                                    <Button
-                                        color="white"
-                                        bgColor={bgColor}
-                                        borderWidth={4}
-                                        borderLeftWidth={0}
-                                        borderRadius={0}
-                                        borderColor="white"
-                                        _hover={{ color: bgColor, bgColor: "white", borderColor: "white" }}
-                                    >
-                                        Send
-                                    </Button>
-                                </InputRightAddon>
-                            </InputGroup>
+                            <SendForm sendTx={sendTx} tokenName={tokenSymbol} bgColor={bgColor} />
+                            <TxResult
+                                isPending={isPending}
+                                isConfirming={isConfirming}
+                                isConfirmed={isConfirmed}
+                                hash={hash}
+                                explorerUrl={chain?.blockExplorers.default.url}
+                            />
                             <BackToTopLink />
                         </WalletWrapper>
                     </>
