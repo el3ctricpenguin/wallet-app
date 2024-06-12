@@ -2,6 +2,8 @@ import { useSwitchChain } from "wagmi";
 import { Select } from "@chakra-ui/react";
 import type { translationObj } from "@/locales/useLocale";
 
+type supportedChainId = 1 | 11155111 | 5000 | 5003;
+
 export default function ChainSwitcher({ chain, t }: { chain: any; t: translationObj }) {
     const { chains, data, status, switchChain } = useSwitchChain();
 
@@ -27,7 +29,8 @@ export default function ChainSwitcher({ chain, t }: { chain: any; t: translation
                 id=""
                 value={chain ? chain.id : ""}
                 onChange={(e) => {
-                    switchChain({ chainId: Number(e.target.value) });
+                    const chainId = Number(e.target.value) as supportedChainId;
+                    switchChain({ chainId: chainId });
                 }}
                 borderRadius={0}
                 borderWidth={3}
