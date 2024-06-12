@@ -6,7 +6,15 @@ export default function ChainSwitcher({ chain }: { chain: any }) {
 
     if (status == "pending") {
         return (
-            <Select w={250}>
+            <Select
+                w={250}
+                borderRadius={0}
+                borderWidth={3}
+                borderColor="white"
+                _hover={{ borderColor: "white" }}
+                _active={{ borderColor: "white" }}
+                _focusVisible={{ borderColor: "white" }}
+            >
                 <option>pending</option>
             </Select>
         );
@@ -19,6 +27,11 @@ export default function ChainSwitcher({ chain }: { chain: any }) {
                 value={chain ? chain.id : ""}
                 onChange={(e) => switchChain({ chainId: Number(e.target.value) })}
                 borderRadius={0}
+                borderWidth={3}
+                borderColor="white"
+                _hover={{ borderColor: "white" }}
+                _active={{ borderColor: "white" }}
+                _focusVisible={{ borderColor: "white" }}
             >
                 {chain ? null : (
                     <option disabled value="">
