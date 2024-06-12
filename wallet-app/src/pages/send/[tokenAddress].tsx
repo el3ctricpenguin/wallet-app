@@ -14,7 +14,7 @@ import {
 import { Alert, AlertIcon, Button, Flex, Heading, Input, InputGroup, InputRightAddon, Link, Spinner, Text } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 
-import { erc20Abi, formatUnits, getAddress, isAddress, parseEther } from "viem";
+import { erc20Abi, getAddress, isAddress, parseEther } from "viem";
 
 import Account from "../../components/Account";
 import Balance from "../../components/Balance";
@@ -45,21 +45,21 @@ export default function Send(): ReactElement {
 
     const { locale, t } = useLocale();
     // const [bgColor, setBgColor] = useState("gray.400");
-    const [bgColor, setBgColor] = useState("red.400");
+    const [bgColor] = useState("red.400");
 
     const router = useRouter();
 
     const routerQuery = router.query.tokenAddress;
     const nativeToken = getNativeTokenName(chain?.name);
-    const isETH = routerQuery == nativeToken;
+    const isETH = routerQuery === nativeToken;
     let tokenAddress: `0x${string}` | null;
 
-    function sendTx(e: React.FormEvent<HTMLFormElement>, tokenInfo: TokenInfo | undefined = undefined) {
+    function sendTx(e: React.FormEvent<HTMLFormElement>, tokenInfo: TokenInfo | undefined = undefined): void {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
         const to = formData.get("address") as `0x${string}`;
         const value = formData.get("amount") as string;
-        if (tokenInfo) {
+        if (tokenInfo !== undefined) {
             if (typeof routerQuery === "string") {
                 writeContract({
                     address: tokenInfo.address,
@@ -169,7 +169,7 @@ export default function Send(): ReactElement {
     }): ReactElement {
         return (
             <>
-                {hash && (
+                {hash !== undefined && (
                     <>
                         <Heading size="lg" mt={2} mb={1}>
                             {t.TX_HASH}:
@@ -211,7 +211,7 @@ export default function Send(): ReactElement {
                 setCountdown((count) => count - 1);
             }, 1000);
             const redirectTimer = setTimeout(() => {
-                router.push("/");
+                router.push("/").catch(() => {});
             }, timer * 1000);
 
             return () => {
@@ -224,7 +224,7 @@ export default function Send(): ReactElement {
             <Flex>
                 <Spinner size="md" mr={4} />
                 <Text verticalAlign="center">
-                    {locale == "en" ? `Redirect in ${countdown} seconds...` : `${countdown}秒後にﾘﾀﾞｲﾚｸﾄを行います...`}
+                    {locale === "en" ? `Redirect in ${countdown} seconds...` : `${countdown}秒後にﾘﾀﾞｲﾚｸﾄを行います...`}
                 </Text>
             </Flex>
         );
@@ -250,7 +250,7 @@ export default function Send(): ReactElement {
                         t={t}
                     />
                     <Heading size="lg" mt={2} mb={1}>
-                        {locale == "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
+                        {locale === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
                     </Heading>
                     <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
                     <SendForm sendTx={sendTx} tokenName={nativeToken} bgColor={bgColor} />
@@ -259,7 +259,7 @@ export default function Send(): ReactElement {
                         isConfirming={isEthConfirming}
                         isConfirmed={isEthConfirmed}
                         hash={ethHash}
-                        explorerUrl={chain?.blockExplorers.default.url}
+                        explorerUrl={chain?.blockExplorers?.default.url}
                     />
                     <BackToTopLink />
                 </WalletWrapper>
@@ -272,7 +272,7 @@ export default function Send(): ReactElement {
                 tokenAddress = getAddress(routerQuery);
                 const { data: balance } = useBalance({ address, token: tokenAddress });
                 const tokenSymbol = balance?.symbol;
-                const tokenBalance = balance ? formatUnits(balance.value, balance.decimals) : "-";
+                // const tokenBalance = balance ? formatUnits(balance.value, balance.decimals) : "-";
                 const decimals = Number(
                     useReadContract({
                         address: tokenAddress,
@@ -303,16 +303,22 @@ export default function Send(): ReactElement {
                                 t={t}
                             />
                             <Heading size="lg" mt={2} mb={1}>
-                                {locale == "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`}
+                                {locale === "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`}
                             </Heading>
                             <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
-                            <SendForm sendTx={(e) => { sendTx(e, tokenInfo); }} tokenName={tokenSymbol} bgColor={bgColor} />
+                            <SendForm
+                                sendTx={(e) => {
+                                    sendTx(e, tokenInfo);
+                                }}
+                                tokenName={tokenSymbol}
+                                bgColor={bgColor}
+                            />
                             <TxResult
                                 isPending={isTokenPending}
                                 isConfirming={isTokenConfirming}
                                 isConfirmed={isTokenConfirmed}
                                 hash={tokenHash}
-                                explorerUrl={chain?.blockExplorers.default.url}
+                                explorerUrl={chain?.blockExplorers?.default.url}
                             />
                             <BackToTopLink />
                         </WalletWrapper>
@@ -322,7 +328,7 @@ export default function Send(): ReactElement {
                 errorContent = `Invalid Token Address Format: ${routerQuery}`;
             }
         } else {
-            errorContent = `Invalid Query Type: ${routerQuery} (${typeof routerQuery})`;
+            errorContent = `Invalid Query Type: ${routerQuery?.toString()} (${typeof routerQuery})`;
         }
         return (
             <WalletWrapper bgColor={bgColor}>

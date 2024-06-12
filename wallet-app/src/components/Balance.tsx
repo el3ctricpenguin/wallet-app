@@ -12,7 +12,7 @@ export default function Balance({
     isHoverEffectEnabled: boolean;
 }): ReactElement {
     if (tokenAddress != null) {
-        const { data, isError, isLoading } = useBalance({ address, token: tokenAddress });
+        const { data } = useBalance({ address, token: tokenAddress });
 
         const name = useReadContract({
             address: tokenAddress,
@@ -35,14 +35,14 @@ export default function Balance({
             </>
         );
     } else {
-        const { data, isError, isLoading } = useBalance({ address });
+        const { data } = useBalance({ address });
         const tokenSymbol = data?.symbol;
         const tokenName = tokenSymbol === "MNT" ? "Mantle" : "Ethereum";
         const tokenBalance = data != null ? formatUnits(data.value, data.decimals) : "-";
         return (
             <>
                 <Flex padding={3} border="2px solid white" _hover={isHoverEffectEnabled ? { bgColor: "whiteAlpha.500" } : ""}>
-                    {tokenSymbol == "ETH" ? (
+                    {tokenSymbol === "ETH" ? (
                         <Image boxSize="60px" objectFit="contain" src="/img/token_ethereum.svg" alt="ETH"></Image>
                     ) : (
                         <Image boxSize="60px" objectFit="contain" src="/img/token_mantle.svg" alt="MNT"></Image>

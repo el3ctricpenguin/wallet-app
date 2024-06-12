@@ -15,7 +15,7 @@ export default function Account({
     connect: any;
     disconnect: any;
     t: translationObj;
-}) {
+}): JSX.Element {
     if (isConnected) {
         return (
             <>

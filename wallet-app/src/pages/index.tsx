@@ -2,7 +2,7 @@ import NextLink from "next/link";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 
 import { SEPOLIA_USDT, getNativeTokenName } from "@/constants";
-import { Divider, Heading, Text } from "@chakra-ui/react";
+import { Divider, Heading } from "@chakra-ui/react";
 
 import Account from "@/components/Account";
 import Balance from "@/components/Balance";
@@ -17,7 +17,7 @@ export default function WalletApp(): ReactElement {
     const { disconnect } = useDisconnect();
 
     const { t } = useLocale();
-    const [bgColor, setBgColor] = useState("gray.400");
+    const [bgColor] = useState("gray.400");
     const nativeToken = getNativeTokenName(chain?.name);
     return (
         <>
