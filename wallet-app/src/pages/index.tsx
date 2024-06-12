@@ -42,7 +42,7 @@ export default function WalletApp(): ReactElement {
                         <NextLink href={"/send/" + nativeToken}>
                             <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={true} />
                         </NextLink>
-                        <Divider borderColor={bgColor} borderWidth={2} />
+                        <Divider borderColor={bgColor} borderWidth={4} />
                         <NextLink href={"/send/" + SEPOLIA_USDT}>
                             <Balance address={address} tokenAddress={SEPOLIA_USDT} isHoverEffectEnabled={true} />
                         </NextLink>

@@ -24,11 +24,7 @@ export default function Balance({
         const tokenBalance = data != null ? formatUnits(data.value, data.decimals) : "-";
         return (
             <>
-                <Flex
-                    padding={3}
-                    bgColor={isHoverEffectEnabled ? "whiteAlpha.300" : ""}
-                    _hover={isHoverEffectEnabled ? { bgColor: "whiteAlpha.500" } : ""}
-                >
+                <Flex padding={3} border="2px solid white" _hover={isHoverEffectEnabled ? { bgColor: "whiteAlpha.500" } : ""}>
                     <Image boxSize="60px" objectFit="contain" src="/img/token_tether.svg" alt="USDT"></Image>
                     <Box ml={4}>
                         {tokenName}
@@ -45,11 +41,7 @@ export default function Balance({
         const tokenBalance = data != null ? formatUnits(data.value, data.decimals) : "-";
         return (
             <>
-                <Flex
-                    padding={3}
-                    bgColor={isHoverEffectEnabled ? "whiteAlpha.300" : ""}
-                    _hover={isHoverEffectEnabled ? { bgColor: "whiteAlpha.500" } : ""}
-                >
+                <Flex padding={3} border="2px solid white" _hover={isHoverEffectEnabled ? { bgColor: "whiteAlpha.500" } : ""}>
                     {tokenSymbol == "ETH" ? (
                         <Image boxSize="60px" objectFit="contain" src="/img/token_ethereum.svg" alt="ETH"></Image>
                     ) : (
