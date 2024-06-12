@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { type ReactElement, useState } from "react";
 import { useAccount, useBalance, useConnect, useDisconnect, useReadContract } from "wagmi";
-import { Alert, AlertIcon, Button, Input, InputGroup, InputRightAddon, Link, Text } from "@chakra-ui/react";
+import { Alert, AlertIcon, Button, Heading, Input, InputGroup, InputRightAddon, Link, Text } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 
 import { erc20Abi, formatUnits, getAddress, isAddress } from "viem";
@@ -47,7 +47,74 @@ export default function Send(): ReactElement {
     let tokenAddress: `0x${string}` | null;
 
     if (isETH) {
-        return <></>;
+        return (
+            <>
+                <WalletWrapper bgColor={bgColor}>
+                    <Heading size="lg" mt={2}>
+                        Network:
+                    </Heading>
+                    <Chain chain={chain} />
+                    <Heading size="lg" mt={2}>
+                        Account:
+                    </Heading>
+                    <Account
+                        isConnected={isConnected}
+                        connectors={connectors}
+                        address={address}
+                        connect={connect}
+                        disconnect={disconnect}
+                    />
+                    <Heading size="lg" mt={2}>
+                        Send {nativeToken}:
+                    </Heading>
+                    <Balance address={address} tokenAddress={undefined} />
+                    <InputGroup>
+                        <Input
+                            width={300}
+                            height={16}
+                            fontSize={36}
+                            placeholder="0.0"
+                            borderColor="white"
+                            borderRadius={0}
+                            borderWidth={4}
+                            _placeholder={{ color: "whiteAlpha.500" }}
+                            _hover={{ borderColor: "white" }}
+                            _active={{ borderColor: "white", boxShadow: "none" }}
+                            _focusVisible={{ borderColor: "white", boxShadow: "none" }}
+                        />
+                        <InputRightAddon bgColor="transparent" border="none" h="auto">
+                            <Text fontSize={40}>{nativeToken}</Text>
+                        </InputRightAddon>
+                    </InputGroup>
+                    <InputGroup size="md" my={3}>
+                        <Input
+                            placeholder="0x..."
+                            borderColor="white"
+                            borderWidth={4}
+                            borderRadius={0}
+                            _placeholder={{ color: "whiteAlpha.500" }}
+                            _hover={{ borderColor: "white" }}
+                            _active={{ borderColor: "white", boxShadow: "none" }}
+                            _focusVisible={{ borderColor: "white", boxShadow: "none" }}
+                        />
+                        <InputRightAddon borderRadius={0} p={0}>
+                            <Button
+                                color="white"
+                                bgColor={bgColor}
+                                borderWidth={4}
+                                borderLeftWidth={0}
+                                borderRadius={0}
+                                borderColor="white"
+                                _hover={{ color: bgColor, bgColor: "white", borderColor: "white" }}
+                            >
+                                Send
+                            </Button>
+                        </InputRightAddon>
+                    </InputGroup>
+                    <BackToTopLink />
+                </WalletWrapper>
+            </>
+        );
     } else {
         let errorContent: string;
         if (typeof routerQuery === "string") {
@@ -65,13 +132,13 @@ export default function Send(): ReactElement {
                 return (
                     <>
                         <WalletWrapper bgColor={bgColor}>
-                            <Text size="xl" mt={2}>
+                            <Heading size="lg" mt={2}>
                                 Network:
-                            </Text>
+                            </Heading>
                             <Chain chain={chain} />
-                            <Text size="xl" mt={2}>
+                            <Heading size="lg" mt={2}>
                                 Account:
-                            </Text>
+                            </Heading>
                             <Account
                                 isConnected={isConnected}
                                 connectors={connectors}
@@ -79,9 +146,9 @@ export default function Send(): ReactElement {
                                 connect={connect}
                                 disconnect={disconnect}
                             />
-                            <Text size="xl" mt={2}>
-                                Send {tokenName}:
-                            </Text>
+                            <Heading size="lg" mt={2}>
+                                Send {tokenSymbol}:
+                            </Heading>
                             <Balance address={address} tokenAddress={tokenAddress} />
                             <InputGroup>
                                 <Input
