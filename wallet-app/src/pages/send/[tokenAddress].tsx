@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { FormEventHandler, type ReactElement, useEffect, useState } from "react";
+import { type FormEventHandler, type ReactElement, useEffect, useState } from "react";
 import {
     useAccount,
     useBalance,
@@ -23,10 +23,10 @@ import { getNativeTokenName } from "@/constants";
 import WalletWrapper from "@/components/WalletWrapper";
 import { useLocale } from "@/locales/useLocale";
 
-type TokenInfo = {
+interface TokenInfo {
     address: `0x${string}`;
     decimals: number;
-};
+}
 
 export default function Send(): ReactElement {
     const { isConnected, address, chain } = useAccount();
@@ -60,7 +60,7 @@ export default function Send(): ReactElement {
         const to = formData.get("address") as `0x${string}`;
         const value = formData.get("amount") as string;
         if (tokenInfo) {
-            if (typeof routerQuery == "string") {
+            if (typeof routerQuery === "string") {
                 writeContract({
                     address: tokenInfo.address,
                     abi: erc20Abi,
@@ -282,7 +282,7 @@ export default function Send(): ReactElement {
                 );
                 const tokenInfo: TokenInfo = {
                     address: tokenAddress,
-                    decimals: decimals,
+                    decimals,
                 };
                 return (
                     <>
@@ -306,7 +306,7 @@ export default function Send(): ReactElement {
                                 {locale == "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`}
                             </Heading>
                             <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
-                            <SendForm sendTx={(e) => sendTx(e, tokenInfo)} tokenName={tokenSymbol} bgColor={bgColor} />
+                            <SendForm sendTx={(e) => { sendTx(e, tokenInfo); }} tokenName={tokenSymbol} bgColor={bgColor} />
                             <TxResult
                                 isPending={isTokenPending}
                                 isConfirming={isTokenConfirming}

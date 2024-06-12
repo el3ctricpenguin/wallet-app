@@ -1,6 +1,6 @@
-import { translationObj } from "@/locales/useLocale";
+import { type translationObj } from "@/locales/useLocale";
 import { Center, Link } from "@chakra-ui/react";
-import { Connector } from "wagmi";
+import { type Connector } from "wagmi";
 export default function Account({
     isConnected,
     connectors,

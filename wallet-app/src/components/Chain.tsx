@@ -4,10 +4,10 @@ import type { translationObj } from "@/locales/useLocale";
 
 type supportedChainId = 1 | 11155111 | 5000 | 5003;
 
-export default function ChainSwitcher({ chain, t }: { chain: any; t: translationObj }) {
-    const { chains, data, status, switchChain } = useSwitchChain();
+export default function ChainSwitcher({ chain, t }: { chain: any; t: translationObj }): JSX.Element {
+    const { chains, status, switchChain } = useSwitchChain();
 
-    if (status == "pending") {
+    if (status === "pending") {
         return (
             <Select
                 w={280}
@@ -27,10 +27,10 @@ export default function ChainSwitcher({ chain, t }: { chain: any; t: translation
                 w={280}
                 name=""
                 id=""
-                value={chain ? chain.id : ""}
+                value={chain !== undefined ? chain.id : ""}
                 onChange={(e) => {
                     const chainId = Number(e.target.value) as supportedChainId;
-                    switchChain({ chainId: chainId });
+                    switchChain({ chainId });
                 }}
                 borderRadius={0}
                 borderWidth={3}
@@ -39,25 +39,27 @@ export default function ChainSwitcher({ chain, t }: { chain: any; t: translation
                 _active={{ borderColor: "white" }}
                 _focusVisible={{ borderColor: "white" }}
             >
-                {chain ? null : (
+                {chain !== undefined ? null : (
                     <option disabled value="">
                         {t.UNSUPPORTED_NETWORK}
                     </option>
                 )}
                 {chains.map((chain) => (
-                    <option value={chain.id}>{chain.name}</option>
+                    <option value={chain.id} key={chain.name}>
+                        {chain.name}
+                    </option>
                 ))}
             </Select>
         );
     }
 }
 
-export function Chain({ chain, t }: { chain: any; t: translationObj }) {
+export function Chain({ chain, t }: { chain: any; t: translationObj }): JSX.Element {
     return (
         <>
-            Chain Name: {chain ? chain.name : "-"}
+            Chain Name: {chain !== undefined ? chain.name : "-"}
             <br />
-            Chain Id: {chain ? chain.id : "-"}
+            Chain Id: {chain !== undefined ? chain.id : "-"}
             <br />
             <ChainSwitcher chain={chain} t={t} />
         </>
