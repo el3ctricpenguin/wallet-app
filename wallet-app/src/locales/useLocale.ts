@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-export type translationObj = {
+export interface translationObj {
     NETWORK: string;
     ACCOUNT: string;
     BALANCE: string;
@@ -13,7 +13,7 @@ export type translationObj = {
     UNSUPPORTED_NETWORK: string;
     CONNECT_WALLET: string;
     DISCONNECT: string;
-};
+}
 
 const en: translationObj = {
     NETWORK: "Network",
@@ -45,10 +45,13 @@ const ja: translationObj = {
     DISCONNECT: "接続解除",
 };
 
-export const useLocale = () => {
+export function useLocale(): {
+    locale: string | undefined;
+    t: translationObj;
+} {
     const { locale } = useRouter();
 
     const t = locale === "en" ? en : ja;
 
     return { locale, t };
-};
+}

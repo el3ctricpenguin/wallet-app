@@ -13,9 +13,3 @@ export const config = createConfig({
         [mantleSepoliaTestnet.id]: http(),
     },
 });
-
-declare module "wagmi" {
-    interface Register {
-        config: typeof config;
-    }
-}

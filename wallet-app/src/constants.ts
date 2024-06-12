@@ -1,7 +1,7 @@
 export function getNativeTokenName(chainName: string | undefined): string {
-    return chainName == "Ethereum" || chainName == "Sepolia"
+    return chainName === "Ethereum" || chainName === "Sepolia"
         ? "ETH"
-        : chainName == "Mantle" || chainName == "Mantle Sepolia Testnet"
+        : chainName === "Mantle" || chainName === "Mantle Sepolia Testnet"
           ? "MNT"
           : "?";
 }
