@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { type FormEventHandler, type ReactElement, useEffect, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import {
     useAccount,
     useBalance,
@@ -11,8 +11,24 @@ import {
     useWaitForTransactionReceipt,
     useWriteContract,
 } from "wagmi";
-import { Alert, AlertIcon, Button, Flex, Heading, Input, InputGroup, InputRightAddon, Link, Spinner, Text } from "@chakra-ui/react";
+import {
+    Alert,
+    AlertIcon,
+    Button,
+    Flex,
+    FormControl,
+    Heading,
+    Input,
+    InputGroup,
+    InputRightAddon,
+    Link,
+    Spinner,
+    Text,
+} from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { erc20Abi, getAddress, isAddress, parseEther } from "viem";
 
@@ -54,84 +70,107 @@ export default function Send(): ReactElement {
     const isETH = routerQuery === nativeToken;
     let tokenAddress: `0x${string}` | null;
 
-    function sendTx(e: React.FormEvent<HTMLFormElement>, tokenInfo: TokenInfo | undefined = undefined): void {
-        e.preventDefault();
-        const formData = new FormData(e.target as HTMLFormElement);
-        const to = formData.get("address") as `0x${string}`;
-        const value = formData.get("amount") as string;
+    function sendTx(data: FormSchemaType, tokenInfo: TokenInfo | undefined = undefined): void {
+        // e.preventDefault();
+        const to = data.address as `0x${string}`;
+        const amount = data.amount;
         if (tokenInfo !== undefined) {
             if (typeof routerQuery === "string") {
                 writeContract({
                     address: tokenInfo.address,
                     abi: erc20Abi,
                     functionName: "transfer",
-                    args: [to, BigInt(value) * BigInt(10 ** tokenInfo.decimals)],
+                    args: [to, BigInt(amount) * BigInt(10 ** tokenInfo.decimals)],
                 });
             }
         } else {
-            sendTransaction({ to, value: parseEther(value) });
+            sendTransaction({ to, value: parseEther(amount.toString()) });
         }
     }
 
+    const formSchema = z.object({
+        amount: z.number().min(0, { message: "Amount must be more than zero" }),
+        address: z.string(), // address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid address"),
+    });
+    type FormSchemaType = z.infer<typeof formSchema>;
+
     function SendForm({
-        sendTx,
+        sendTxFunc,
         tokenName,
         bgColor,
     }: {
-        sendTx: FormEventHandler<HTMLFormElement>;
+        sendTxFunc: (data: { address: string; amount: number }, tokenInfo?: TokenInfo | undefined) => void;
         tokenName: string | undefined;
         bgColor: string;
     }): ReactElement {
+        const {
+            register,
+            handleSubmit,
+            formState: { errors },
+        } = useForm<FormSchemaType>({
+            resolver: zodResolver(formSchema),
+        });
+
+        const onSubmit = (data: FormSchemaType): void => {
+            sendTxFunc(data);
+            console.log(data);
+        };
+
         return (
-            <form onSubmit={sendTx}>
-                <InputGroup mt={3}>
-                    <Input
-                        width={300}
-                        height={16}
-                        fontSize={36}
-                        placeholder="0.0"
-                        borderColor="white"
-                        borderRadius={0}
-                        borderWidth={4}
-                        _placeholder={{ color: "whiteAlpha.500" }}
-                        _hover={{ borderColor: "white" }}
-                        _active={{ borderColor: "white", boxShadow: "none" }}
-                        _focusVisible={{ borderColor: "white", boxShadow: "none" }}
-                        name="amount"
-                        required={true}
-                    />
-                    <InputRightAddon bgColor="transparent" border="none" h="auto">
-                        <Text fontSize={40}>{tokenName}</Text>
-                    </InputRightAddon>
-                </InputGroup>
-                <InputGroup size="md" my={3}>
-                    <Input
-                        placeholder="0x..."
-                        borderColor="white"
-                        borderWidth={4}
-                        borderRadius={0}
-                        _placeholder={{ color: "whiteAlpha.500" }}
-                        _hover={{ borderColor: "white" }}
-                        _active={{ borderColor: "white", boxShadow: "none" }}
-                        _focusVisible={{ borderColor: "white", boxShadow: "none" }}
-                        name="address"
-                        required
-                    />
-                    <InputRightAddon borderRadius={0} p={0}>
-                        <Button
-                            color="white"
-                            bgColor={bgColor}
-                            borderWidth={4}
-                            borderLeftWidth={0}
-                            borderRadius={0}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <FormControl>
+                    <InputGroup mt={3}>
+                        <Input
+                            width={300}
+                            height={16}
+                            fontSize={36}
+                            placeholder="0.0"
                             borderColor="white"
-                            _hover={{ color: bgColor, bgColor: "white", borderColor: "white" }}
-                            type="submit"
-                        >
-                            {t.SEND}
-                        </Button>
-                    </InputRightAddon>
-                </InputGroup>
+                            borderRadius={0}
+                            borderWidth={4}
+                            _placeholder={{ color: "whiteAlpha.500" }}
+                            _hover={{ borderColor: "white" }}
+                            _active={{ borderColor: "white", boxShadow: "none" }}
+                            _focusVisible={{ borderColor: "white", boxShadow: "none" }}
+                            type="number"
+                            {...(register("amount"), { valueAsNumber: true })}
+                            required
+                        />
+                        <InputRightAddon bgColor="transparent" border="none" h="auto">
+                            <Text fontSize={40}>{tokenName}</Text>
+                        </InputRightAddon>
+                    </InputGroup>
+                    {errors.amount?.message != null && <Text>{errors.amount.message}</Text>}
+                    <InputGroup size="md" my={3}>
+                        <Input
+                            placeholder="0x..."
+                            borderColor="white"
+                            borderWidth={4}
+                            borderRadius={0}
+                            _placeholder={{ color: "whiteAlpha.500" }}
+                            _hover={{ borderColor: "white" }}
+                            _active={{ borderColor: "white", boxShadow: "none" }}
+                            _focusVisible={{ borderColor: "white", boxShadow: "none" }}
+                            {...register("address")}
+                            required
+                        />
+                        <InputRightAddon borderRadius={0} p={0}>
+                            <Button
+                                color="white"
+                                bgColor={bgColor}
+                                borderWidth={4}
+                                borderLeftWidth={0}
+                                borderRadius={0}
+                                borderColor="white"
+                                _hover={{ color: bgColor, bgColor: "white", borderColor: "white" }}
+                                type="submit"
+                            >
+                                {t.SEND}
+                            </Button>
+                        </InputRightAddon>
+                    </InputGroup>
+                </FormControl>
             </form>
         );
     }
@@ -253,7 +292,7 @@ export default function Send(): ReactElement {
                         {locale === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
                     </Heading>
                     <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
-                    <SendForm sendTx={sendTx} tokenName={nativeToken} bgColor={bgColor} />
+                    <SendForm sendTxFunc={sendTx} tokenName={nativeToken} bgColor={bgColor} />
                     <TxResult
                         isPending={isEthPending}
                         isConfirming={isEthConfirming}
@@ -307,7 +346,7 @@ export default function Send(): ReactElement {
                             </Heading>
                             <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
                             <SendForm
-                                sendTx={(e) => {
+                                sendTxFunc={(e) => {
                                     sendTx(e, tokenInfo);
                                 }}
                                 tokenName={tokenSymbol}
