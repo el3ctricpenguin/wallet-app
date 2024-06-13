@@ -106,6 +106,7 @@ export default function Send(): ReactElement {
         const {
             register,
             handleSubmit,
+            // watch,
             formState: { errors },
         } = useForm<FormSchemaType>({
             resolver: zodResolver(formSchema),
@@ -115,6 +116,7 @@ export default function Send(): ReactElement {
             sendTxFunc(data);
             console.log(data);
         };
+        // console.log(watch("amount"), watch("address"), errors);
 
         return (
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -134,7 +136,7 @@ export default function Send(): ReactElement {
                             _active={{ borderColor: "white", boxShadow: "none" }}
                             _focusVisible={{ borderColor: "white", boxShadow: "none" }}
                             type="number"
-                            {...(register("amount"), { valueAsNumber: true })}
+                            {...register("amount", { valueAsNumber: true })}
                             required
                         />
                         <InputRightAddon bgColor="transparent" border="none" h="auto">
