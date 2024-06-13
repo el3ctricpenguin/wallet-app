@@ -30,7 +30,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { erc20Abi, getAddress, isAddress, parseEther } from "viem";
+import { erc20Abi, formatUnits, getAddress, isAddress, parseEther } from "viem";
 
 import Account from "../../components/Account";
 import Balance from "../../components/Balance";
@@ -88,21 +88,29 @@ export default function Send(): ReactElement {
         }
     }
 
-    const formSchema = z.object({
-        amount: z.number().min(0, { message: "Amount must be more than zero" }),
-        address: z.string(), // address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid address"),
-    });
-    type FormSchemaType = z.infer<typeof formSchema>;
+    interface FormSchemaType {
+        address: string;
+        amount: number;
+    }
 
     function SendForm({
         sendTxFunc,
         tokenName,
+        accountBalance,
         bgColor,
     }: {
         sendTxFunc: (data: { address: string; amount: number }, tokenInfo?: TokenInfo | undefined) => void;
         tokenName: string | undefined;
+        accountBalance: string;
         bgColor: string;
     }): ReactElement {
+        const formSchema = z.object({
+            amount: z
+                .number()
+                .min(0, { message: "Amount must be more than zero" })
+                .max(Number(accountBalance), { message: "Insufficient Balance" }),
+            address: z.string(), // address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid address"),
+        });
         const {
             register,
             handleSubmit,
@@ -272,6 +280,8 @@ export default function Send(): ReactElement {
     }
 
     if (isETH) {
+        const { data: balance } = useBalance({ address });
+        const ethBalance = balance != null ? formatUnits(balance.value, balance.decimals) : "-";
         return (
             <>
                 <WalletWrapper bgColor={bgColor}>
@@ -294,7 +304,7 @@ export default function Send(): ReactElement {
                         {locale === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
                     </Heading>
                     <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
-                    <SendForm sendTxFunc={sendTx} tokenName={nativeToken} bgColor={bgColor} />
+                    <SendForm sendTxFunc={sendTx} tokenName={nativeToken} accountBalance={ethBalance} bgColor={bgColor} />
                     <TxResult
                         isPending={isEthPending}
                         isConfirming={isEthConfirming}
@@ -313,7 +323,7 @@ export default function Send(): ReactElement {
                 tokenAddress = getAddress(routerQuery);
                 const { data: balance } = useBalance({ address, token: tokenAddress });
                 const tokenSymbol = balance?.symbol;
-                // const tokenBalance = balance ? formatUnits(balance.value, balance.decimals) : "-";
+                const tokenBalance = balance != null ? formatUnits(balance.value, balance.decimals) : "-";
                 const decimals = Number(
                     useReadContract({
                         address: tokenAddress,
@@ -352,6 +362,7 @@ export default function Send(): ReactElement {
                                     sendTx(e, tokenInfo);
                                 }}
                                 tokenName={tokenSymbol}
+                                accountBalance={tokenBalance}
                                 bgColor={bgColor}
                             />
                             <TxResult
