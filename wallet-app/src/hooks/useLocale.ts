@@ -1,21 +1,24 @@
 import { useRouter } from "next/router";
+import { createContext } from "react";
 
-export interface translationObj {
-    NETWORK: string;
-    ACCOUNT: string;
-    BALANCE: string;
-    SEND: string;
-    TX_HASH: string;
-    PENDING: string;
-    CONFIRMING: string;
-    TX_CONFIRMED: string;
-    BACK_TO_BALANCES: string;
-    UNSUPPORTED_NETWORK: string;
-    CONNECT_WALLET: string;
-    DISCONNECT: string;
+export class TranslationObj {
+    LOCALE: string = "";
+    NETWORK: string = "";
+    ACCOUNT: string = "";
+    BALANCE: string = "";
+    SEND: string = "";
+    TX_HASH: string = "";
+    PENDING: string = "";
+    CONFIRMING: string = "";
+    TX_CONFIRMED: string = "";
+    BACK_TO_BALANCES: string = "";
+    UNSUPPORTED_NETWORK: string = "";
+    CONNECT_WALLET: string = "";
+    DISCONNECT: string = "";
 }
 
-const en: translationObj = {
+const en: TranslationObj = {
+    LOCALE: "en",
     NETWORK: "Network",
     ACCOUNT: "Account",
     BALANCE: "Balances",
@@ -30,7 +33,8 @@ const en: translationObj = {
     DISCONNECT: "Disconnect",
 };
 
-const ja: translationObj = {
+const ja: TranslationObj = {
+    LOCALE: "ja",
     NETWORK: "ﾈｯﾄﾜｰｸ",
     ACCOUNT: "ｱｶｳﾝﾄ",
     BALANCE: "残高",
@@ -47,11 +51,11 @@ const ja: translationObj = {
 
 export function useLocale(): {
     locale: string | undefined;
-    t: translationObj;
+    t: TranslationObj;
 } {
     const { locale } = useRouter();
-
     const t = locale === "en" ? en : ja;
-
     return { locale, t };
 }
+
+export const tContext = createContext(new TranslationObj());

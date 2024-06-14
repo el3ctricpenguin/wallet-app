@@ -1,4 +1,4 @@
-import { type translationObj } from "@/locales/useLocale";
+import { type TranslationObj } from "@/hooks/useLocale";
 import { Center, Link } from "@chakra-ui/react";
 import { type Connector } from "wagmi";
 export default function Account({
@@ -14,7 +14,7 @@ export default function Account({
     address: `0x${string}` | undefined;
     connect: any;
     disconnect: any;
-    t: translationObj;
+    t: TranslationObj;
 }): JSX.Element {
     if (isConnected) {
         return (

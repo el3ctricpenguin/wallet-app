@@ -1,10 +1,10 @@
 import { useSwitchChain } from "wagmi";
 import { Select } from "@chakra-ui/react";
-import type { translationObj } from "@/locales/useLocale";
+import type { TranslationObj } from "@/hooks/useLocale";
 
 type supportedChainId = 1 | 11155111 | 5000 | 5003;
 
-export default function ChainSwitcher({ chain, t }: { chain: any; t: translationObj }): JSX.Element {
+export default function ChainSwitcher({ chain, t }: { chain: any; t: TranslationObj }): JSX.Element {
     const { chains, status, switchChain } = useSwitchChain();
 
     if (status === "pending") {
@@ -54,7 +54,7 @@ export default function ChainSwitcher({ chain, t }: { chain: any; t: translation
     }
 }
 
-export function Chain({ chain, t }: { chain: any; t: translationObj }): JSX.Element {
+export function Chain({ chain, t }: { chain: any; t: TranslationObj }): JSX.Element {
     return (
         <>
             Chain Name: {chain !== undefined ? chain.name : "-"}

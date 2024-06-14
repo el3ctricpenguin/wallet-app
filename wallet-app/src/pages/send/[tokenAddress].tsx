@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { type ReactElement, useEffect, useState } from "react";
+import { type ReactElement, useContext, useEffect, useState } from "react";
 import {
     useAccount,
     useBalance,
@@ -37,11 +37,108 @@ import Balance from "../../components/Balance";
 import Chain from "../../components/Chain";
 import { getNativeTokenName } from "@/constants";
 import WalletWrapper from "@/components/WalletWrapper";
-import { useLocale } from "@/locales/useLocale";
+import { tContext } from "@/hooks/useLocale";
 
 interface TokenInfo {
     address: `0x${string}`;
     decimals: number;
+}
+
+interface FormSchemaType {
+    address: string;
+    amount: number;
+}
+
+function BackToTopLink(): ReactElement {
+    const t = useContext(tContext);
+    return (
+        <Link as={NextLink} href="/" textDecoration="underline" mt={4} display="inline-block" _hover={{ fontStyle: "italic" }}>
+            {t.BACK_TO_BALANCES}
+            <ChevronLeftIcon />
+        </Link>
+    );
+}
+
+function ErrorCard({ children }: { children: React.ReactNode }): ReactElement {
+    return (
+        <Alert status="error" variant="solid" my={4} boxShadow="0px 0px 10px #00000077">
+            <AlertIcon />
+            {children}
+        </Alert>
+    );
+}
+
+function RedirectTimer({ timer }: { timer: number }): ReactElement {
+    const [countdown, setCountdown] = useState(timer);
+    const router = useRouter();
+    const locale = useContext(tContext).LOCALE;
+
+    useEffect(() => {
+        const countdownTimer = setInterval(() => {
+            setCountdown((count) => count - 1);
+        }, 1000);
+        const redirectTimer = setTimeout(() => {
+            router.push("/").catch(() => {});
+        }, timer * 1000);
+
+        return () => {
+            clearInterval(countdownTimer);
+            clearTimeout(redirectTimer);
+        };
+    }, [router]);
+
+    return (
+        <Flex>
+            <Spinner size="md" mr={4} />
+            <Text verticalAlign="center">
+                {locale === "en" ? `Redirect in ${countdown} seconds...` : `${countdown}秒後にﾘﾀﾞｲﾚｸﾄを行います...`}
+            </Text>
+        </Flex>
+    );
+}
+
+function TxResult({
+    isPending,
+    isConfirming,
+    isConfirmed,
+    hash,
+    explorerUrl,
+}: {
+    isPending: boolean;
+    isConfirming: boolean;
+    isConfirmed: boolean;
+    hash: string | undefined;
+    explorerUrl: string | undefined;
+}): ReactElement {
+    const t = useContext(tContext);
+    return (
+        <>
+            {hash !== undefined && (
+                <>
+                    <Heading size="lg" mt={2} mb={1}>
+                        {t.TX_HASH}:
+                    </Heading>{" "}
+                    <Link href={explorerUrl + "/tx/" + hash} target="_blank" textDecoration="underline" _hover={{ fontStyle: "italic" }}>
+                        {hash}
+                    </Link>
+                </>
+            )}
+            {isPending && (
+                <Text>
+                    [<Spinner size="sm" mx={2} />
+                    {t.PENDING}...]
+                </Text>
+            )}
+            {isConfirming && (
+                <Text>
+                    [<Spinner size="sm" mx={2} />
+                    {t.CONFIRMING}...]
+                </Text>
+            )}
+            {isConfirmed && <Text>[{t.TX_CONFIRMED}!]</Text>}
+            {isConfirmed && <RedirectTimer timer={10} />}
+        </>
+    );
 }
 
 export default function Send(): ReactElement {
@@ -59,19 +156,16 @@ export default function Send(): ReactElement {
         hash: tokenHash,
     });
 
-    const { locale, t } = useLocale();
-    // const [bgColor, setBgColor] = useState("gray.400");
     const [bgColor] = useState("red.400");
+    const t = useContext(tContext);
 
     const router = useRouter();
-
     const routerQuery = router.query.tokenAddress;
     const nativeToken = getNativeTokenName(chain?.name);
     const isETH = routerQuery === nativeToken;
     let tokenAddress: `0x${string}` | null;
 
     function sendTx(data: FormSchemaType, tokenInfo: TokenInfo | undefined = undefined): void {
-        // e.preventDefault();
         const to = data.address as `0x${string}`;
         const amount = data.amount;
         if (tokenInfo !== undefined) {
@@ -86,11 +180,6 @@ export default function Send(): ReactElement {
         } else {
             sendTransaction({ to, value: parseEther(amount.toString()) });
         }
-    }
-
-    interface FormSchemaType {
-        address: string;
-        amount: number;
     }
 
     function SendForm({
@@ -124,7 +213,8 @@ export default function Send(): ReactElement {
             sendTxFunc(data);
             console.log(data);
         };
-        // console.log(watch("amount"), watch("address"), errors);
+
+        const t = useContext(tContext);
 
         return (
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -185,134 +275,42 @@ export default function Send(): ReactElement {
         );
     }
 
-    function BackToTopLink(): ReactElement {
-        return (
-            <Link as={NextLink} href="/" textDecoration="underline" mt={4} display="inline-block" _hover={{ fontStyle: "italic" }}>
-                {t.BACK_TO_BALANCES}
-                <ChevronLeftIcon />
-            </Link>
-        );
-    }
-
-    function ErrorCard({ children }: { children: React.ReactNode }): ReactElement {
-        return (
-            <Alert status="error" variant="solid" my={4} boxShadow="0px 0px 10px #00000077">
-                <AlertIcon />
-                {children}
-            </Alert>
-        );
-    }
-
-    function TxResult({
-        isPending,
-        isConfirming,
-        isConfirmed,
-        hash,
-        explorerUrl,
-    }: {
-        isPending: boolean;
-        isConfirming: boolean;
-        isConfirmed: boolean;
-        hash: string | undefined;
-        explorerUrl: string | undefined;
-    }): ReactElement {
-        return (
-            <>
-                {hash !== undefined && (
-                    <>
-                        <Heading size="lg" mt={2} mb={1}>
-                            {t.TX_HASH}:
-                        </Heading>{" "}
-                        <Link
-                            href={explorerUrl + "/tx/" + hash}
-                            target="_blank"
-                            textDecoration="underline"
-                            _hover={{ fontStyle: "italic" }}
-                        >
-                            {hash}
-                        </Link>
-                    </>
-                )}
-                {isPending && (
-                    <Text>
-                        [<Spinner size="sm" mx={2} />
-                        {t.PENDING}...]
-                    </Text>
-                )}
-                {isConfirming && (
-                    <Text>
-                        [<Spinner size="sm" mx={2} />
-                        {t.CONFIRMING}...]
-                    </Text>
-                )}
-                {isConfirmed && <Text>[{t.TX_CONFIRMED}!]</Text>}
-                {isConfirmed && <RedirectTimer timer={10} />}
-            </>
-        );
-    }
-
-    function RedirectTimer({ timer }: { timer: number }): ReactElement {
-        const [countdown, setCountdown] = useState(timer);
-        const router = useRouter();
-
-        useEffect(() => {
-            const countdownTimer = setInterval(() => {
-                setCountdown((count) => count - 1);
-            }, 1000);
-            const redirectTimer = setTimeout(() => {
-                router.push("/").catch(() => {});
-            }, timer * 1000);
-
-            return () => {
-                clearInterval(countdownTimer);
-                clearTimeout(redirectTimer);
-            };
-        }, [router]);
-
-        return (
-            <Flex>
-                <Spinner size="md" mr={4} />
-                <Text verticalAlign="center">
-                    {locale === "en" ? `Redirect in ${countdown} seconds...` : `${countdown}秒後にﾘﾀﾞｲﾚｸﾄを行います...`}
-                </Text>
-            </Flex>
-        );
-    }
-
     if (isETH) {
         const { data: balance } = useBalance({ address });
         const ethBalance = balance != null ? formatUnits(balance.value, balance.decimals) : "-";
         return (
             <>
                 <WalletWrapper bgColor={bgColor}>
-                    <Heading size="lg" mt={2}>
-                        {t.NETWORK}:
-                    </Heading>
-                    <Chain chain={chain} t={t} />
-                    <Heading size="lg" mt={2}>
-                        {t.ACCOUNT}:
-                    </Heading>
-                    <Account
-                        isConnected={isConnected}
-                        connectors={connectors}
-                        address={address}
-                        connect={connect}
-                        disconnect={disconnect}
-                        t={t}
-                    />
-                    <Heading size="lg" mt={2} mb={1}>
-                        {locale === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
-                    </Heading>
-                    <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
-                    <SendForm sendTxFunc={sendTx} tokenName={nativeToken} accountBalance={ethBalance} bgColor={bgColor} />
-                    <TxResult
-                        isPending={isEthPending}
-                        isConfirming={isEthConfirming}
-                        isConfirmed={isEthConfirmed}
-                        hash={ethHash}
-                        explorerUrl={chain?.blockExplorers?.default.url}
-                    />
-                    <BackToTopLink />
+                    <tContext.Provider value={t}>
+                        <Heading size="lg" mt={2}>
+                            {t.NETWORK}:
+                        </Heading>
+                        <Chain chain={chain} t={t} />
+                        <Heading size="lg" mt={2}>
+                            {t.ACCOUNT}:
+                        </Heading>
+                        <Account
+                            isConnected={isConnected}
+                            connectors={connectors}
+                            address={address}
+                            connect={connect}
+                            disconnect={disconnect}
+                            t={t}
+                        />
+                        <Heading size="lg" mt={2} mb={1}>
+                            {t.LOCALE === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
+                        </Heading>
+                        <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
+                        <SendForm sendTxFunc={sendTx} tokenName={nativeToken} accountBalance={ethBalance} bgColor={bgColor} />
+                        <TxResult
+                            isPending={isEthPending}
+                            isConfirming={isEthConfirming}
+                            isConfirmed={isEthConfirmed}
+                            hash={ethHash}
+                            explorerUrl={chain?.blockExplorers?.default.url}
+                        />
+                        <BackToTopLink />
+                    </tContext.Provider>
                 </WalletWrapper>
             </>
         );
@@ -338,41 +336,43 @@ export default function Send(): ReactElement {
                 return (
                     <>
                         <WalletWrapper bgColor={bgColor}>
-                            <Heading size="lg" mt={2}>
-                                {t.NETWORK}:
-                            </Heading>
-                            <Chain chain={chain} t={t} />
-                            <Heading size="lg" mt={2}>
-                                {t.ACCOUNT}:
-                            </Heading>
-                            <Account
-                                isConnected={isConnected}
-                                connectors={connectors}
-                                address={address}
-                                connect={connect}
-                                disconnect={disconnect}
-                                t={t}
-                            />
-                            <Heading size="lg" mt={2} mb={1}>
-                                {locale === "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`}
-                            </Heading>
-                            <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
-                            <SendForm
-                                sendTxFunc={(e) => {
-                                    sendTx(e, tokenInfo);
-                                }}
-                                tokenName={tokenSymbol}
-                                accountBalance={tokenBalance}
-                                bgColor={bgColor}
-                            />
-                            <TxResult
-                                isPending={isTokenPending}
-                                isConfirming={isTokenConfirming}
-                                isConfirmed={isTokenConfirmed}
-                                hash={tokenHash}
-                                explorerUrl={chain?.blockExplorers?.default.url}
-                            />
-                            <BackToTopLink />
+                            <tContext.Provider value={t}>
+                                <Heading size="lg" mt={2}>
+                                    {t.NETWORK}:
+                                </Heading>
+                                <Chain chain={chain} t={t} />
+                                <Heading size="lg" mt={2}>
+                                    {t.ACCOUNT}:
+                                </Heading>
+                                <Account
+                                    isConnected={isConnected}
+                                    connectors={connectors}
+                                    address={address}
+                                    connect={connect}
+                                    disconnect={disconnect}
+                                    t={t}
+                                />
+                                <Heading size="lg" mt={2} mb={1}>
+                                    {t.LOCALE === "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`}
+                                </Heading>
+                                <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
+                                <SendForm
+                                    sendTxFunc={(e) => {
+                                        sendTx(e, tokenInfo);
+                                    }}
+                                    tokenName={tokenSymbol}
+                                    accountBalance={tokenBalance}
+                                    bgColor={bgColor}
+                                />
+                                <TxResult
+                                    isPending={isTokenPending}
+                                    isConfirming={isTokenConfirming}
+                                    isConfirmed={isTokenConfirmed}
+                                    hash={tokenHash}
+                                    explorerUrl={chain?.blockExplorers?.default.url}
+                                />
+                                <BackToTopLink />
+                            </tContext.Provider>
                         </WalletWrapper>
                     </>
                 );
