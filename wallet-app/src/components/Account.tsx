@@ -1,21 +1,22 @@
-import { type TranslationObj } from "@/hooks/useLocale";
+import { tContext } from "@/hooks/useLocale";
 import { Center, Link } from "@chakra-ui/react";
+import { useContext } from "react";
 import { type Connector } from "wagmi";
+
 export default function Account({
     isConnected,
     connectors,
     address,
     connect,
     disconnect,
-    t,
 }: {
     isConnected: boolean;
     connectors: readonly Connector[];
     address: `0x${string}` | undefined;
     connect: any;
     disconnect: any;
-    t: TranslationObj;
 }): JSX.Element {
+    const t = useContext(tContext);
     if (isConnected) {
         return (
             <>

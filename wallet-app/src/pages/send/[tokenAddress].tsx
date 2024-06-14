@@ -285,7 +285,7 @@ export default function Send(): ReactElement {
                         <Heading size="lg" mt={2}>
                             {t.NETWORK}:
                         </Heading>
-                        <Chain chain={chain} t={t} />
+                        <Chain chain={chain} />
                         <Heading size="lg" mt={2}>
                             {t.ACCOUNT}:
                         </Heading>
@@ -295,7 +295,6 @@ export default function Send(): ReactElement {
                             address={address}
                             connect={connect}
                             disconnect={disconnect}
-                            t={t}
                         />
                         <Heading size="lg" mt={2} mb={1}>
                             {t.LOCALE === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
@@ -340,7 +339,7 @@ export default function Send(): ReactElement {
                                 <Heading size="lg" mt={2}>
                                     {t.NETWORK}:
                                 </Heading>
-                                <Chain chain={chain} t={t} />
+                                <Chain chain={chain} />
                                 <Heading size="lg" mt={2}>
                                     {t.ACCOUNT}:
                                 </Heading>
@@ -350,7 +349,6 @@ export default function Send(): ReactElement {
                                     address={address}
                                     connect={connect}
                                     disconnect={disconnect}
-                                    t={t}
                                 />
                                 <Heading size="lg" mt={2} mb={1}>
                                     {t.LOCALE === "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`}

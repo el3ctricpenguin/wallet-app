@@ -2,6 +2,7 @@ import { useBalance, useReadContract } from "wagmi";
 import { erc20Abi, formatUnits } from "viem";
 import { type ReactElement } from "react";
 import { Box, Flex, Image } from "@chakra-ui/react";
+
 export default function Balance({
     address,
     tokenAddress = undefined,

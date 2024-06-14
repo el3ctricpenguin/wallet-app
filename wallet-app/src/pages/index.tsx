@@ -27,7 +27,7 @@ export default function WalletApp(): ReactElement {
                         <Heading size="lg" mt={2}>
                             {t.NETWORK}:
                         </Heading>
-                        <Chain chain={chain} t={t} />
+                        <Chain chain={chain} />
                         <Heading size="lg" mt={2}>
                             {t.ACCOUNT}:
                         </Heading>
@@ -37,7 +37,6 @@ export default function WalletApp(): ReactElement {
                             address={address}
                             connect={connect}
                             disconnect={disconnect}
-                            t={t}
                         />
                         <Heading size="lg" mt={2}>
                             {t.BALANCE}:
@@ -58,7 +57,6 @@ export default function WalletApp(): ReactElement {
                             address={address}
                             connect={connect}
                             disconnect={disconnect}
-                            t={t}
                         />
                     </>
                 )}
