@@ -4,11 +4,11 @@ import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { SEPOLIA_USDT, getNativeTokenName } from "@/constants";
 import { Divider, Heading } from "@chakra-ui/react";
 
-import Account from "@/components/Account";
-import Balance from "@/components/Balance";
-import Chain from "../components/Chain";
+import Account from "@/components/common/Account";
+import Balance from "@/components/common/Balance";
+import Chain from "../components/common/Chain";
 import { type ReactElement, useContext, useState } from "react";
-import WalletWrapper from "@/components/WalletWrapper";
+import WalletWrapper from "@/components/common/WalletWrapper";
 import { tContext } from "@/hooks/useLocale";
 
 export default function WalletApp(): ReactElement {
