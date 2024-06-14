@@ -2,7 +2,7 @@ import { tContext } from "@/hooks/useLocale";
 import { Heading, Link, Spinner, Text } from "@chakra-ui/react";
 
 import { type ReactElement, useContext } from "react";
-import RedirectTimer from "./RedirectTimet";
+import RedirectTimer from "./RedirectTimer";
 
 export default function TxResult({
     isPending,
