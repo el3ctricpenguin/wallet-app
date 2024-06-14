@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-
 import { type ReactElement, useContext, useState } from "react";
 import {
     type Config,
@@ -12,22 +11,15 @@ import {
     useWaitForTransactionReceipt,
     useWriteContract,
 } from "wagmi";
-
 import { erc20Abi, formatUnits, getAddress, isAddress, parseEther } from "viem";
-
-import Account from "../../components/common/Account";
-import Balance from "../../components/common/Balance";
-import Chain from "../../components/common/Chain";
-import { getNativeTokenName } from "@/constants";
-import WalletWrapper from "@/components/common/WalletWrapper";
-import { tContext } from "@/hooks/useLocale";
-import BackToTopLink from "@/components/send/BackToTopLink";
-import ErrorCard from "@/components/send/ErrorCard";
-import TxResult from "@/components/send/TxResult";
-import SendForm from "@/components/send/SendForm";
-import { type FormSchemaType, type TokenInfo } from "@/types";
 import { Heading } from "@chakra-ui/react";
 import { type SendTransactionMutate, type WriteContractMutate } from "wagmi/query";
+
+import { getNativeTokenName } from "@/constants";
+import { Account, Balance, Chain, WalletWrapper } from "@/components/common";
+import { BackToTopLink, ErrorCard, SendForm, TxResult } from "@/components/send";
+import { tContext } from "@/hooks/useLocale";
+import { type FormSchemaType, type TokenInfo } from "@/types";
 
 function sendTx(
     data: FormSchemaType,
