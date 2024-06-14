@@ -2,7 +2,7 @@ import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Link } from "@chakra-ui/react";
 import { useContext, type ReactElement } from "react";
 import NextLink from "next/link";
-import { tContext } from "@/hooks/useLocale";
+import { tContext } from "@/functions/useLocale";
 
 export default function BackToTopLink(): ReactElement {
     const t = useContext(tContext);

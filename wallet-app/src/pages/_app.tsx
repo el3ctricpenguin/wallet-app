@@ -6,7 +6,7 @@ import { WagmiProvider } from "wagmi";
 import { config } from "../wagmi";
 import { theme } from "@/theme";
 import { type ReactElement } from "react";
-import { tContext, useLocale } from "@/hooks/useLocale";
+import useLocale, { tContext } from "@/functions/useLocale";
 
 const queryClient = new QueryClient();
 

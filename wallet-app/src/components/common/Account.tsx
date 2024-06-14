@@ -1,4 +1,4 @@
-import { tContext } from "@/hooks/useLocale";
+import { tContext } from "@/functions/useLocale";
 import { Center, Link } from "@chakra-ui/react";
 import { useContext } from "react";
 import { type Connector } from "wagmi";

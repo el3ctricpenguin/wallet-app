@@ -1,4 +1,4 @@
-import { tContext } from "@/hooks/useLocale";
+import { tContext } from "@/functions/useLocale";
 import { Heading, Link, Spinner, Text } from "@chakra-ui/react";
 
 import { type ReactElement, useContext } from "react";

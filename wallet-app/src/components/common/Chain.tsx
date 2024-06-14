@@ -1,6 +1,6 @@
 import { useSwitchChain } from "wagmi";
 import { Select } from "@chakra-ui/react";
-import { tContext, type TranslationObj } from "@/hooks/useLocale";
+import { tContext, type TranslationObj } from "@/functions/useLocale";
 import { useContext } from "react";
 
 type supportedChainId = 1 | 11155111 | 5000 | 5003;

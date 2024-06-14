@@ -3,7 +3,7 @@ import { Button, FormControl, Input, InputGroup, InputRightAddon, Text } from "@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { tContext } from "@/hooks/useLocale";
+import { tContext } from "@/functions/useLocale";
 import { type TokenInfo, type FormSchemaType } from "@/types";
 
 export default function SendForm({

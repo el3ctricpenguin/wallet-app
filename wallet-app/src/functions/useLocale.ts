@@ -49,7 +49,7 @@ const ja: TranslationObj = {
     DISCONNECT: "接続解除",
 };
 
-export function useLocale(): {
+export default function useLocale(): {
     locale: string | undefined;
     t: TranslationObj;
 } {

@@ -4,7 +4,7 @@ import { type ReactElement, useContext, useState } from "react";
 import { Divider, Heading } from "@chakra-ui/react";
 
 import { Account, Balance, Chain, WalletWrapper } from "@/components/common";
-import { tContext } from "@/hooks/useLocale";
+import { tContext } from "@/functions/useLocale";
 import { SEPOLIA_USDT, getNativeTokenName } from "@/constants";
 
 export default function WalletApp(): ReactElement {

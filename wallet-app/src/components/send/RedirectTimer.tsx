@@ -1,4 +1,4 @@
-import { tContext } from "@/hooks/useLocale";
+import { tContext } from "@/functions/useLocale";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { type ReactElement, useContext, useEffect, useState } from "react";
