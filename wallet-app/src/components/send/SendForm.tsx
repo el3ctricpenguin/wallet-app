@@ -57,6 +57,7 @@ export default function SendForm({
                         _active={{ borderColor: "white", boxShadow: "none" }}
                         _focusVisible={{ borderColor: "white", boxShadow: "none" }}
                         type="number"
+                        step="any"
                         {...register("amount", { valueAsNumber: true })}
                         required
                     />

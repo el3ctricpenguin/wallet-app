@@ -5,7 +5,7 @@ import { Divider, Heading } from "@chakra-ui/react";
 
 import { Account, Balance, Chain, WalletWrapper } from "@/components/common";
 import { tContext } from "@/functions/useLocale";
-import { SEPOLIA_USDT, getNativeTokenName } from "@/constants";
+import { getNativeTokenName, getUSDTAddress } from "@/constants";
 
 export default function WalletApp(): ReactElement {
     const { isConnected, address, chain } = useAccount();
@@ -14,6 +14,7 @@ export default function WalletApp(): ReactElement {
 
     const [bgColor] = useState("gray.400");
     const nativeToken = getNativeTokenName(chain?.name);
+    const USDTAddress = getUSDTAddress(chain?.name);
     const t = useContext(tContext);
     return (
         <>
@@ -41,8 +42,8 @@ export default function WalletApp(): ReactElement {
                             <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={true} />
                         </NextLink>
                         <Divider borderColor={bgColor} borderWidth={4} />
-                        <NextLink href={"/send/" + SEPOLIA_USDT}>
-                            <Balance address={address} tokenAddress={SEPOLIA_USDT} isHoverEffectEnabled={true} />
+                        <NextLink href={"/send/" + USDTAddress}>
+                            <Balance address={address} tokenAddress={USDTAddress} isHoverEffectEnabled={true} />
                         </NextLink>
                     </>
                 ) : (

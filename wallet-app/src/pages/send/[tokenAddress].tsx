@@ -15,8 +15,6 @@ export default function Send(): JSX.Element {
     const nativeToken = getNativeTokenName(chain?.name);
     const isETH = routerQuery === nativeToken;
 
-    console.log(routerQuery, nativeToken);
-
     return isETH ? (
         <SendETH nativeToken={nativeToken} bgColor={bgColor} />
     ) : typeof routerQuery === "string" ? (
