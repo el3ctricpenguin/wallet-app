@@ -3,7 +3,7 @@ import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { type ReactElement, useContext, useState } from "react";
 import { Divider, Heading } from "@chakra-ui/react";
 
-import { Account, Balance, Chain, WalletWrapper } from "@/components/common";
+import { Account, Chain, ETHBalance, TokenBalance, WalletWrapper } from "@/components/common";
 import { tContext } from "@/functions/useLocale";
 import { getNativeTokenName, getUSDTAddress } from "@/constants";
 
@@ -39,11 +39,11 @@ export default function WalletApp(): ReactElement {
                             {t.BALANCE}:
                         </Heading>
                         <NextLink href={"/send/" + nativeToken}>
-                            <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={true} />
+                            <ETHBalance address={address} isHoverEffectEnabled={true} />
                         </NextLink>
                         <Divider borderColor={bgColor} borderWidth={4} />
                         <NextLink href={"/send/" + USDTAddress}>
-                            <Balance address={address} tokenAddress={USDTAddress} isHoverEffectEnabled={true} />
+                            <TokenBalance address={address} tokenAddress={USDTAddress} isHoverEffectEnabled={true} />
                         </NextLink>
                     </>
                 ) : (

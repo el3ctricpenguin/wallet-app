@@ -3,7 +3,7 @@ import { Heading } from "@chakra-ui/react";
 import { isAddress, formatUnits, erc20Abi, type Address } from "viem";
 import { useAccount, useBalance, useConnect, useDisconnect, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
-import { WalletWrapper, Chain, Account, Balance } from "../common";
+import { WalletWrapper, Chain, Account, TokenBalance } from "../common";
 import BackToTopLink from "./BackToTopLink";
 import ErrorCard from "./ErrorCard";
 import SendForm from "./SendForm";
@@ -61,7 +61,7 @@ export default function SendToken({ routerQuery, bgColor }: { routerQuery: strin
                         <Heading size="lg" mt={2} mb={1}>
                             {t.LOCALE === "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`}
                         </Heading>
-                        <Balance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
+                        <TokenBalance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
                         <SendForm
                             sendTxFunc={(e) => {
                                 sendTx(e, writeContract, undefined, tokenInfo);

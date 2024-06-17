@@ -3,7 +3,7 @@ import { Heading } from "@chakra-ui/react";
 import { formatUnits } from "viem";
 import { useAccount, useBalance, useConnect, useDisconnect, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 
-import { WalletWrapper, Chain, Account, Balance } from "../common";
+import { WalletWrapper, Chain, Account, ETHBalance } from "../common";
 import BackToTopLink from "./BackToTopLink";
 import SendForm from "./SendForm";
 import TxResult from "./TxResult";
@@ -44,7 +44,7 @@ export default function SendETH({ nativeToken, bgColor }: { nativeToken: string;
                     <Heading size="lg" mt={2} mb={1}>
                         {t.LOCALE === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
                     </Heading>
-                    <Balance address={address} tokenAddress={undefined} isHoverEffectEnabled={false} />
+                    <ETHBalance address={address} isHoverEffectEnabled={false} />
                     <SendForm
                         sendTxFunc={(e) => {
                             sendTx(e, undefined, sendTransaction);
