@@ -17,17 +17,7 @@ export default function Account({
     disconnect: any;
 }): JSX.Element {
     const t = useContext(tContext);
-    if (isConnected) {
-        return (
-            <>
-                {address} (
-                <Link href="#" onClick={disconnect} textDecoration="underline" _hover={{ fontStyle: "italic" }}>
-                    {t.DISCONNECT}
-                </Link>
-                )
-            </>
-        );
-    } else {
+    if (!isConnected) {
         return (
             <>
                 <Center
@@ -45,4 +35,13 @@ export default function Account({
             </>
         );
     }
+    return (
+        <>
+            {address} (
+            <Link href="#" onClick={disconnect} textDecoration="underline" _hover={{ fontStyle: "italic" }}>
+                {t.DISCONNECT}
+            </Link>
+            )
+        </>
+    );
 }
