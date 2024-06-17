@@ -1,16 +1,14 @@
 {
-    "translation": {
-        "NETWORK": "ﾈｯﾄﾜｰｸ",
-        "ACCOUNT": "ｱｶｳﾝﾄ",
-        "BALANCE": "残高",
-        "SEND": "送信",
-        "TX_HASH": "TXﾊｯｼｭ",
-        "PENDING": "処理中",
-        "CONFIRMING": "承認中",
-        "TX_CONFIRMED": "ﾄﾗﾝｻﾞｸｼｮﾝが承認されました",
-        "BACK_TO_BALANCES": "残高表示に戻る",
-        "UNSUPPORTED_NETWORK": "非対応のﾈｯﾄﾜｰｸ",
-        "CONNECT_WALLET": "ｳｫﾚｯﾄを接続",
-        "DISCONNECT": "接続解除"
-    }
+    "NETWORK": "ﾈｯﾄﾜｰｸ",
+    "ACCOUNT": "ｱｶｳﾝﾄ",
+    "BALANCE": "残高",
+    "SEND": "送信",
+    "TX_HASH": "TXﾊｯｼｭ",
+    "PENDING": "処理中",
+    "CONFIRMING": "承認中",
+    "TX_CONFIRMED": "ﾄﾗﾝｻﾞｸｼｮﾝが承認されました",
+    "BACK_TO_BALANCES": "残高表示に戻る",
+    "UNSUPPORTED_NETWORK": "非対応のﾈｯﾄﾜｰｸ",
+    "CONNECT_WALLET": "ｳｫﾚｯﾄを接続",
+    "DISCONNECT": "接続解除"
 }
