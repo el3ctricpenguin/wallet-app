@@ -7,9 +7,12 @@ import { BackToTopLink, SendForm, TxResult, ErrorCard } from "@/components/send"
 import { type TokenInfo } from "@/types";
 import { sendTx } from "@/functions";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 export default function SendToken({ routerQuery, bgColor }: { routerQuery: string | string[] | undefined; bgColor: string }): JSX.Element {
     const { t } = useTranslation("common");
+    const router = useRouter();
+    const { locale } = router;
 
     const { isConnected, address, chain } = useAccount();
     const { connectors, connect } = useConnect();
@@ -54,7 +57,7 @@ export default function SendToken({ routerQuery, bgColor }: { routerQuery: strin
                         disconnect={disconnect}
                     />
                     <Heading size="lg" mt={2} mb={1}>
-                        {/* {t.LOCALE === "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`} */}
+                        {locale === "en" ? `Send ${tokenSymbol}:` : `${tokenSymbol}の送信:`}
                     </Heading>
                     <TokenBalance address={address} tokenAddress={tokenAddress} isHoverEffectEnabled={false} />
                     <SendForm

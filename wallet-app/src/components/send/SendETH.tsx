@@ -6,9 +6,12 @@ import { WalletWrapper, Chain, Account, ETHBalance } from "@/components/common";
 import { BackToTopLink, SendForm, TxResult } from "@/components/send";
 import { sendTx } from "@/functions";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 export default function SendETH({ nativeToken, bgColor }: { nativeToken: string; bgColor: string }): JSX.Element {
     const { t } = useTranslation("common");
+    const router = useRouter();
+    const { locale } = router;
 
     const { isConnected, address, chain } = useAccount();
     const { connectors, connect } = useConnect();
@@ -32,7 +35,7 @@ export default function SendETH({ nativeToken, bgColor }: { nativeToken: string;
                 </Heading>
                 <Account isConnected={isConnected} connectors={connectors} address={address} connect={connect} disconnect={disconnect} />
                 <Heading size="lg" mt={2} mb={1}>
-                    {/* {t.LOCALE === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`} */}
+                    {locale === "en" ? `Send ${nativeToken}:` : `${nativeToken}の送信:`}
                 </Heading>
                 <ETHBalance address={address} isHoverEffectEnabled={false} />
                 <SendForm

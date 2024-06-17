@@ -12,7 +12,6 @@ export async function getStaticProps({ locale }: { locale: string }): Promise<an
     return {
         props: {
             ...(await serverSideTranslations(locale, ["common"])),
-            // Will be passed to the page component as props
         },
     };
 }
