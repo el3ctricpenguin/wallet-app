@@ -15,14 +15,18 @@ export default function Send(): JSX.Element {
     const nativeToken = getNativeTokenName(chain?.name);
     const isETH = routerQuery === nativeToken;
 
-    return isETH ? (
-        <SendETH nativeToken={nativeToken} bgColor={bgColor} />
-    ) : typeof routerQuery === "string" ? (
-        <SendToken routerQuery={routerQuery} bgColor={bgColor} />
-    ) : (
-        <WalletWrapper bgColor={bgColor}>
-            <ErrorCard>{`Invalid Query Type: ${routerQuery?.toString()} (${typeof routerQuery})`}</ErrorCard>
-            <BackToTopLink />
-        </WalletWrapper>
-    );
+    if (isETH) {
+        return <SendETH nativeToken={nativeToken} bgColor={bgColor} />;
+    }
+
+    if (typeof routerQuery === "string") {
+        return <SendToken routerQuery={routerQuery} bgColor={bgColor} />;
+    } else {
+        return (
+            <WalletWrapper bgColor={bgColor}>
+                <ErrorCard>{`Invalid Query Type: ${routerQuery?.toString()} (${typeof routerQuery})`}</ErrorCard>
+                <BackToTopLink />
+            </WalletWrapper>
+        );
+    }
 }
