@@ -1,2 +1,2 @@
-export { default as sendTx } from "./sendTx";
-export { default as useLocale } from "./useLocale";
+export { default as sendTx } from "@/functions/sendTx";
+export { default as useLocale } from "@/functions/useLocale";

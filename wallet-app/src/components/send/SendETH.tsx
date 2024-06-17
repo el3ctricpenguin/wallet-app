@@ -3,10 +3,8 @@ import { Heading } from "@chakra-ui/react";
 import { formatUnits } from "viem";
 import { useAccount, useBalance, useConnect, useDisconnect, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 
-import { WalletWrapper, Chain, Account, ETHBalance } from "../common";
-import BackToTopLink from "./BackToTopLink";
-import SendForm from "./SendForm";
-import TxResult from "./TxResult";
+import { WalletWrapper, Chain, Account, ETHBalance } from "@/components/common";
+import { BackToTopLink, SendForm, TxResult } from "@/components/send";
 import { useContext } from "react";
 import { sendTx } from "@/functions";
 
