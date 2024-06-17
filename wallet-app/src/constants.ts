@@ -1,11 +1,18 @@
 import { getAddress, type Address } from "viem";
 
 export function getNativeTokenName(chainName: string | undefined): string {
-    return chainName === "Ethereum" || chainName === "Sepolia"
-        ? "ETH"
-        : chainName === "Mantle" || chainName === "Mantle Sepolia Testnet"
-          ? "MNT"
-          : "?";
+    switch (chainName) {
+        case "Ethereum":
+            return "ETH";
+        case "Sepolia":
+            return "ETH";
+        case "Mantle":
+            return "MNT";
+        case "Mantle Sepolia Testnet":
+            return "MNT";
+        default:
+            return "?";
+    }
 }
 const ETH_USDT = getAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7");
 const SEPOLIA_USDT = getAddress("0x5DD4e5874E40465A6D894076CE993bd6434eaA86");
