@@ -1,0 +1,14 @@
+{
+    "NETWORK": "Network",
+    "ACCOUNT": "Account",
+    "BALANCE": "Balances",
+    "SEND": "Send",
+    "TX_HASH": "Tx Hash",
+    "PENDING": "Pending",
+    "CONFIRMING": "Confirming",
+    "TX_CONFIRMED": "Tx Confirmed",
+    "BACK_TO_BALANCES": "Back to balances",
+    "UNSUPPORTED_NETWORK": "Unsupported Network",
+    "CONNECT_WALLET": "Connect wallet",
+    "DISCONNECT": "Disconnect"
+}
