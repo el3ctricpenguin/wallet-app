@@ -1,6 +1,7 @@
 import { tContext } from "@/functions/useLocale";
 import { Center, Link } from "@chakra-ui/react";
 import { useContext } from "react";
+import { type Address } from "viem";
 import { type Connector } from "wagmi";
 
 export default function Account({
@@ -12,7 +13,7 @@ export default function Account({
 }: {
     isConnected: boolean;
     connectors: readonly Connector[];
-    address: `0x${string}` | undefined;
+    address: Address | undefined;
     connect: any;
     disconnect: any;
 }): JSX.Element {

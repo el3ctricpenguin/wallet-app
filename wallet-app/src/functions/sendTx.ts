@@ -1,5 +1,5 @@
 import { type Config } from "wagmi";
-import { erc20Abi, parseEther } from "viem";
+import { type Address, erc20Abi, parseEther } from "viem";
 import { type SendTransactionMutate, type WriteContractMutate } from "wagmi/query";
 
 import { type FormSchemaType, type TokenInfo } from "@/types";
@@ -10,7 +10,7 @@ export default function sendTx(
     sendTransaction: SendTransactionMutate<Config, unknown> | undefined,
     tokenInfo: TokenInfo | undefined = undefined
 ): void {
-    const to = data.address as `0x${string}`;
+    const to = data.address as Address;
     const amount = data.amount;
     if (tokenInfo !== undefined) {
         if (writeContract !== undefined) {

@@ -1,5 +1,5 @@
 import { useBalance, useReadContract } from "wagmi";
-import { erc20Abi, formatUnits } from "viem";
+import { type Address, erc20Abi, formatUnits } from "viem";
 import { type ReactElement } from "react";
 import { Box, Flex, Image } from "@chakra-ui/react";
 
@@ -8,8 +8,8 @@ export default function Balance({
     tokenAddress = undefined,
     isHoverEffectEnabled = false,
 }: {
-    address: `0x${string}` | undefined;
-    tokenAddress: `0x${string}` | undefined;
+    address: Address | undefined;
+    tokenAddress: Address | undefined;
     isHoverEffectEnabled: boolean;
 }): ReactElement {
     if (tokenAddress != null) {

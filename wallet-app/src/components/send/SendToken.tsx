@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Heading } from "@chakra-ui/react";
-import { isAddress, formatUnits, erc20Abi } from "viem";
+import { isAddress, formatUnits, erc20Abi, type Address } from "viem";
 import { useAccount, useBalance, useConnect, useDisconnect, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 import { WalletWrapper, Chain, Account, Balance } from "../common";
@@ -24,7 +24,7 @@ export default function SendToken({ routerQuery, bgColor }: { routerQuery: strin
         hash: tokenHash,
     });
 
-    const tokenAddress = routerQuery as `0x${string}`;
+    const tokenAddress = routerQuery as Address;
     if (isAddress(tokenAddress)) {
         const { data: balance } = useBalance({ address, token: tokenAddress });
         const tokenSymbol = balance?.symbol;

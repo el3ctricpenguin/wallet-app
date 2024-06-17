@@ -1,5 +1,7 @@
+import { type Address } from "viem";
+
 export interface TokenInfo {
-    address: `0x${string}`;
+    address: Address;
     decimals: number;
 }
 
