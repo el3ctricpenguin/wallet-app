@@ -1,6 +1,5 @@
-import { tContext } from "@/functions/useLocale";
 import { Center, Link } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useTranslation } from "next-i18next";
 import { type Address } from "viem";
 import { type Connector } from "wagmi";
 
@@ -17,7 +16,7 @@ export default function Account({
     connect: any;
     disconnect: any;
 }): JSX.Element {
-    const t = useContext(tContext);
+    const { t } = useTranslation("common");
     if (!isConnected) {
         return (
             <>
@@ -31,7 +30,7 @@ export default function Account({
                     border={"2px solid white"}
                     _hover={{ bg: "whiteAlpha.400" }}
                 >
-                    {t.CONNECT_WALLET}
+                    {t("CONNECT_WALLET")}
                 </Center>
             </>
         );
@@ -40,7 +39,7 @@ export default function Account({
         <>
             {address} (
             <Link href="#" onClick={disconnect} textDecoration="underline" _hover={{ fontStyle: "italic" }}>
-                {t.DISCONNECT}
+                {t("DISCONNECT")}
             </Link>
             )
         </>

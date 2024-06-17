@@ -1,10 +1,10 @@
-import { useContext, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { Button, FormControl, Input, InputGroup, InputRightAddon, Text } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { tContext } from "@/functions/useLocale";
 import { type TokenInfo, type FormSchemaType } from "@/types";
+import { useTranslation } from "next-i18next";
 
 export default function SendForm({
     sendTxFunc,
@@ -37,7 +37,7 @@ export default function SendForm({
         console.log(data);
     };
 
-    const t = useContext(tContext);
+    const { t } = useTranslation("common");
 
     return (
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -90,7 +90,7 @@ export default function SendForm({
                             _hover={{ color: bgColor, bgColor: "white", borderColor: "white" }}
                             type="submit"
                         >
-                            {t.SEND}
+                            {t("SEND")}
                         </Button>
                     </InputRightAddon>
                 </InputGroup>

@@ -1,12 +1,12 @@
-import { tContext } from "@/functions/useLocale";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { type ReactElement, useContext, useEffect, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 
 export default function RedirectTimer({ timer }: { timer: number }): ReactElement {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [countdown, setCountdown] = useState(timer);
     const router = useRouter();
-    const locale = useContext(tContext).LOCALE;
+    // const { t } = useTranslation("common");
 
     useEffect(() => {
         const countdownTimer = setInterval(() => {
@@ -26,7 +26,7 @@ export default function RedirectTimer({ timer }: { timer: number }): ReactElemen
         <Flex>
             <Spinner size="md" mr={4} />
             <Text verticalAlign="center">
-                {locale === "en" ? `Redirect in ${countdown} seconds...` : `${countdown}秒後にﾘﾀﾞｲﾚｸﾄを行います...`}
+                {/* {locale === "en" ? `Redirect in ${countdown} seconds...` : `${countdown}秒後にﾘﾀﾞｲﾚｸﾄを行います...`} */}
             </Text>
         </Flex>
     );

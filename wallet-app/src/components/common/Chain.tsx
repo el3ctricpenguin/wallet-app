@@ -1,13 +1,14 @@
 import { useSwitchChain } from "wagmi";
 import { Select } from "@chakra-ui/react";
-import { tContext, type TranslationObj } from "@/functions/useLocale";
-import { useContext } from "react";
+import { type TranslationObj } from "@/functions/useLocale";
+
+import { useTranslation } from "next-i18next";
 
 type supportedChainId = 1 | 11155111 | 5000 | 5003;
 
 export default function ChainSwitcher({ chain }: { chain: any }): JSX.Element {
     const { chains, status, switchChain } = useSwitchChain();
-    const t = useContext(tContext);
+    const { t } = useTranslation("common");
 
     if (status === "pending") {
         return (
@@ -20,7 +21,7 @@ export default function ChainSwitcher({ chain }: { chain: any }): JSX.Element {
                 _active={{ borderColor: "white" }}
                 _focusVisible={{ borderColor: "white" }}
             >
-                <option>{t.PENDING}</option>
+                <option>{t("PENDING")}</option>
             </Select>
         );
     } else {
@@ -43,7 +44,7 @@ export default function ChainSwitcher({ chain }: { chain: any }): JSX.Element {
             >
                 {chain !== undefined ? null : (
                     <option disabled value="">
-                        {t.UNSUPPORTED_NETWORK}
+                        {t("UNSUPPORTED_NETWORK")}
                     </option>
                 )}
                 {chains.map((chain) => (
